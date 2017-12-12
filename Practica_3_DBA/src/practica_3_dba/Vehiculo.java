@@ -32,6 +32,11 @@ public class Vehiculo extends SingleAgent{
     private String key;
     private Boolean repostaje;
     private Boolean finalizar;
+    private Boolean BUSCANDO;
+    private Boolean LLEGANDO;
+    private Boolean ESPERANDO;
+    private Tipo tipo;
+    private String conversacion_id;
 
     /**
     *
@@ -48,8 +53,8 @@ public class Vehiculo extends SingleAgent{
     *
     * @author 
     */
-    public void conexion(){
-        
+    public void conexion() throws InterruptedException, JSONException{
+        recibir_mensaje();
     }
     
     /**
@@ -70,12 +75,14 @@ public class Vehiculo extends SingleAgent{
     */
     public void recibir_mensaje() throws InterruptedException, JSONException{
         inbox = receiveACLMessage();
-        if(!inbox.getContent().equals("\"CRASHED\"")){
-            recepcion = new JSONObject(inbox.getContent());
-            //recepcion_plano = recepcion.toString();
-            //System.out.println("Pizarra: " + recepcion_plano);
-        }else
-            finalizar = true;
+        recepcion = new JSONObject(inbox.getContent());
+        String recepcion_plano = recepcion.toString();
+        System.out.println("Pizarra: " + recepcion_plano);
+        if(inbox.getPerformativeInt()==ACLMessage.REQUEST){
+            if(recepcion.has("ID")){
+                conversacion_id = recepcion.getString("ID");
+            }
+        }
     }
     
     /**
@@ -84,13 +91,20 @@ public class Vehiculo extends SingleAgent{
     */
     @Override
     public void execute(){
-        while(!finalizar){
+        try {
+            conexion();
+            /*while(!finalizar){
             try {
-                recibir_mensaje();
-                actuar();
+            recibir_mensaje();
+            actuar();
             } catch (InterruptedException | JSONException ex) {
-                Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
             }
+            }*/
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Vehiculo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JSONException ex) {
+            Logger.getLogger(Vehiculo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

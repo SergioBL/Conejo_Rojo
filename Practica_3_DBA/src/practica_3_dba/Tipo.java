@@ -10,7 +10,7 @@ package practica_3_dba;
  * @author salome
  */
 public enum Tipo {
-    AERO,
+    AEREO,
     COCHE,
     CAMION
 }

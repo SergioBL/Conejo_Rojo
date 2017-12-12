@@ -28,6 +28,7 @@ public class Pizarra extends SingleAgent{
     private int scanner_compartido[][];
     private Map<String, Tipo> vehiculos;
     private boolean finalizar;
+    private String conversacion_id;
     
 
     /**
@@ -45,19 +46,28 @@ public class Pizarra extends SingleAgent{
     *
     * @author 
     */
-    public void conexion(){
-        
+    public void conexion() throws JSONException, InterruptedException{
+        envio = new JSONObject();
+        envio.put("world","map1");
+        enviar_mensaje(envio.toString(), "Achernar", ACLMessage.SUBSCRIBE);
+        recibir_mensaje();
+        envio = new JSONObject();
+        envio.put("ID",conversacion_id);
+        for(int i = 1; i <= 4; i++)
+            enviar_mensaje(envio.toString(), "vehiculo"+i, ACLMessage.REQUEST);
     }
     
     /**
     *
     * @author 
     */
-    public void enviar_mensaje(String mensaje, String receptor){
+    public void enviar_mensaje(String mensaje, String receptor, int performativa){
+        System.out.println("Envia: " +mensaje+receptor);
         outbox = new ACLMessage();
         outbox.setSender(getAid());
         outbox.setReceiver(new AgentID(receptor));
         outbox.setContent(mensaje);
+        outbox.setPerformative(performativa);
         this.send(outbox);
     }
     
@@ -67,12 +77,19 @@ public class Pizarra extends SingleAgent{
     */
     public void recibir_mensaje() throws InterruptedException, JSONException{
         inbox = receiveACLMessage();
-        if(!inbox.getContent().equals("\"CRASHED\"")){
-            recepcion = new JSONObject(inbox.getContent());
-            //recepcion_plano = recepcion.toString();
-            //System.out.println("Pizarra: " + recepcion_plano);
-        }else
-            finalizar = true;
+        recepcion = new JSONObject(inbox.getContent());
+        String recepcion_plano = recepcion.toString();
+        System.out.println("Pizarra: " + recepcion_plano);
+        if(inbox.getPerformativeInt()==ACLMessage.INFORM){
+            System.out.println("Conversacion: " + inbox.getConversationId());
+            conversacion_id = inbox.getConversationId();
+        }else if(inbox.getPerformativeInt() == ACLMessage.NOT_UNDERSTOOD){
+            System.out.println("Pizarra NOTUNDERSTOOD: " + recepcion_plano);
+        }else if(inbox.getPerformativeInt() == ACLMessage.FAILURE){
+            System.out.println("Pizarra FAILURE: " + recepcion_plano);
+        }else if(inbox.getPerformativeInt() == ACLMessage.REFUSE){
+            System.out.println("Pizarra REFUSE: " + recepcion_plano);
+        }
     }
     
     /**
@@ -89,13 +106,18 @@ public class Pizarra extends SingleAgent{
     */
     @Override
     public void execute(){
-        while(!finalizar){
+        try {
+            conexion();
+            /*while(!finalizar){
             try {
-                recibir_mensaje();
-                actuar();
+            recibir_mensaje();
+            actuar();
             } catch (InterruptedException | JSONException ex) {
-                Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
             }
+            }*/
+        } catch (JSONException | InterruptedException ex) {
+            Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -139,7 +161,7 @@ public class Pizarra extends SingleAgent{
                 envio.put("pizarra","Pizarra");
             else//mandar mensaje ok a vehiculo
                 envio.put("pizarra","OK");
-            enviar_mensaje(envio.toString(), "vehiculo15");
+          //  enviar_mensaje(envio.toString(), "vehiculo15");
         }
     }
     
