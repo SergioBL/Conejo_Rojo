@@ -35,13 +35,14 @@ public class Pizarra extends SingleAgent{
 
     /**
     *
-    * @author 
+    * @author Alex Sergio Salomé Joaquín
     */
     public Pizarra(AgentID aid) throws Exception {
         super(aid);
         outbox = null;
         inbox = null;  
         finalizar = false;
+        mapa_compartido = new int [1000][1000];
     }
     
     /**
@@ -61,7 +62,7 @@ public class Pizarra extends SingleAgent{
     
     /**
     *
-    * @author 
+    * @author Alex Sergio Salomé Joaquín
     */
     public void enviar_mensaje(String mensaje, String receptor, int performativa){
         System.out.println("Envia: " +mensaje+receptor);
@@ -75,7 +76,21 @@ public class Pizarra extends SingleAgent{
     
     /**
     *
-    * @author 
+    * @author Alex Sergio Salomé Joaquín
+    */
+    public void enviar_mensaje(String mensaje, AgentID receptor, int performativa){
+        System.out.println("Pizarra envia: " +mensaje + " a "+receptor);
+        outbox = new ACLMessage();
+        outbox.setSender(getAid());
+        outbox.setReceiver(receptor);
+        outbox.setContent(mensaje);
+        outbox.setPerformative(performativa);
+        this.send(outbox);
+    }
+    
+    /**
+    *
+    * @author Alex Sergio Salomé Joaquín
     */
     public void recibir_mensaje() throws InterruptedException, JSONException{
         inbox = receiveACLMessage();
