@@ -41,6 +41,8 @@ public class Vehiculo extends SingleAgent{
     private AgentID nombreVehiculo;
     private String inReplyTo;
     private int paso;
+    private int energy;
+    private boolean goal;
 
     /**
     *
@@ -65,7 +67,6 @@ public class Vehiculo extends SingleAgent{
     public boolean conexion() throws InterruptedException, JSONException{
         //Recibimos el request de pizarra
         recibir_mensaje();
-        obtieneMapaComun();
         //Construimos el mensaje
         envio = new JSONObject();
         envio.put("command","checkin");
@@ -124,6 +125,8 @@ public class Vehiculo extends SingleAgent{
         bateria = datos.getInt("battery");
         gps_x = datos.getInt("x");
         gps_y = datos.getInt("y");
+        energy = datos.getInt("energy");
+        goal = datos.getBoolean("goal");
         JSONArray rad = datos.getJSONArray("sensor");
         for(int i = 0; i < rad.length(); i+=range)
             for(int j = 0; j < range; j++)
@@ -163,7 +166,11 @@ public class Vehiculo extends SingleAgent{
     * @author Alex
     */
     public void obtieneMapaComun() throws JSONException{
-        JSONArray map = recepcion.getJSONArray("BuscaObjetivo");
+        JSONArray map;
+        if(recepcion.has("ID"))
+            map = recepcion.getJSONArray("Mapa");
+        else
+            map = recepcion.getJSONArray("BuscaObjetivo");
         paso = recepcion.getInt("Pasos");
          for(int i = 0; i < map.length(); i+=1000)
             for(int j = 0; j < 1000; j++)
@@ -175,7 +182,7 @@ public class Vehiculo extends SingleAgent{
     * @author Alex Sergio Salomé Joaquín
     */
     public void enviar_mensaje(String mensaje, String receptor, int performativa){
-        System.out.println("Envia: " +mensaje+receptor);
+        System.out.println("Vehiculo envia: " +mensaje + " a "+receptor);
         outbox = new ACLMessage();
         outbox.setSender(getAid());
         //Para contestar con la id de la conversacion
@@ -202,6 +209,7 @@ public class Vehiculo extends SingleAgent{
         if(inbox.getPerformativeInt()==ACLMessage.REQUEST && conversacion_id == null){
             if(recepcion.has("ID")){
                 conversacion_id = recepcion.getString("ID");
+                obtieneMapaComun();
             }
         }else
             inReplyTo = inbox.getReplyWith();
@@ -235,7 +243,7 @@ public class Vehiculo extends SingleAgent{
     @Override
     public void finalize(){
         try {
-            System.out.println("Pizarra muerto");
+            System.out.println("Vehiculo muerto");
         } finally {
             super.finalize();
         }
@@ -250,7 +258,7 @@ public class Vehiculo extends SingleAgent{
     public void actuar() throws JSONException, InterruptedException{
         
         //Busqueda
-        if(inbox.getPerformativeInt()==ACLMessage.REQUEST && inbox.getContent().equals("BuscaObjetivo")){
+        if(inbox.getPerformativeInt()==ACLMessage.REQUEST && recepcion.getString("Accion").equals("Buscar")){
             
             if(fuelrate<=1){
                 //Codigo de salomé
@@ -260,18 +268,39 @@ public class Vehiculo extends SingleAgent{
                 String movimiento = "moveN";
                 envio = new JSONObject();
                 envio.put("command",movimiento);
+                //Nos movemos
                 enviar_mensaje(envio.toString(),"Achernar",ACLMessage.REQUEST);
                 recibir_mensaje();
-                if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
+            }
+            
+            //Comrpobamos que no ha habido error al hablar con el servidor
+            if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD || inbox.getPerformativeInt()==ACLMessage.REFUSE){
                     finalizar =true;
-                    enviar_mensaje(recepcion.getString("details"),"Achernar",ACLMessage.REFUSE);
-                }
-                else{
-                    //envio = new JSONObject();
-                    //envio.put("command",movimiento);
-                    enviar_mensaje(" ", "pizarra", ACLMessage.INFORM);
+                    enviar_mensaje(recepcion.getString("details"),"pizarra",ACLMessage.REFUSE);
+            }
+            else{
+                //actualizamos los datos ya que nos hemos movido y se lo enviamos a pizarra
+                envio = new JSONObject();
                     
-                }
+                enviar_mensaje("","Achernar",ACLMessage.QUERY_REF);
+                recibir_mensaje();
+                if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD)
+                    enviar_mensaje(recepcion.getString("details"),"pizarra",ACLMessage.REFUSE);
+                else
+                    actualizarDatos();
+                    
+                int map[] = new int[10000];
+                int k = 0;
+                for(int i = 0; i < 1000; i++)
+                    for(int j = 0; j < 1000; j++, k++)
+                        map[k] = mapa[i][j];
+                    
+                envio.put("MapaAux",map);
+                envio.put("x", gps_x);
+                envio.put("x", gps_y);
+                envio.put("energy", energy);
+                envio.put("goal", goal);
+                enviar_mensaje(envio.toString(), "pizarra", ACLMessage.INFORM);  
             }
         }
             
