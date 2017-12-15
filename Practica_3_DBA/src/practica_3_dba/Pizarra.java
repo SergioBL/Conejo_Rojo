@@ -29,6 +29,8 @@ public class Pizarra extends SingleAgent{
     private Map<String, Tipo> vehiculos;
     private boolean finalizar;
     private String conversacion_id;
+    private boolean objetivoEncontrado;
+    private boolean EnObjetivo;//asociarlo a vehiculo
     
 
     /**
@@ -108,14 +110,14 @@ public class Pizarra extends SingleAgent{
     public void execute(){
         try {
             conexion();
-            /*while(!finalizar){
+            while(!finalizar){
             try {
             recibir_mensaje();
             actuar();
             } catch (InterruptedException | JSONException ex) {
             Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
             }
-            }*/
+            }
         } catch (JSONException | InterruptedException ex) {
             Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -149,20 +151,44 @@ public class Pizarra extends SingleAgent{
     */
     public void actuar() throws JSONException{
         
-        if(recepcion.has("vehiculo")){
-            if(recepcion.getString("vehiculo").equals("cerrar"))
-                finalizar = true;
-        }else if(recepcion.has("battery")){
-            //Actuar según niveles de batería
-            //recepcion_plano = recepcion.getString("battery");
-            //bateria = (int) Float.parseFloat(recepcion_plano);
-            envio = new JSONObject();
-            if(bateria <= 2)//mandar mensaje de repostaje a vehiculo
-                envio.put("pizarra","Pizarra");
-            else//mandar mensaje ok a vehiculo
-                envio.put("pizarra","OK");
-          //  enviar_mensaje(envio.toString(), "vehiculo15");
+        ////////////////////////Busqueda////////////////////////
+        
+        if(!objetivoEncontrado){
+            if(recepcion.has("TipoVehiculo")){
+                 String tipoVehiculo = recepcion.getString("TipoVehiculo");
+                //nombre del vehiculo y otra info
+                
+             }else if(recepcion.has("MapaAux")){
+                 //sacar todo
+                  objetivoEncontrado = recepcion.getBoolean("Objetivo");
+                  //mas info Mapaaux , Scaner , etcc
+            }
         }
+        
+        /////////////////////Fin-Busqueda///////////////////////////
+        
+        /////////////////////Llegada-Obretivo///////////////////////
+        
+        if(objetivoEncontrado && !EnObjetivo){
+            if(recepcion.has("EnObjetivo")){
+                 EnObjetivo = recepcion.getBoolean("EnObjetivo");
+                 
+                //nombre del vehiculo
+             }else if(recepcion.has("")){
+            }
+            
+        }
+        ////////////////////Fin-llegadaObjetivo////////////////////////////
+        
+        ///////////////////////Baterias agotadas y refuel Agotado///////////////////
+        
+        if(recepcion.has("SinRefuel")){
+                 boolean sinRefuel = recepcion.getBoolean("SinRefuel"); 
+         //enviar CLOSE al server y recoger traza
+         finalizar=true;
+        }
+        ///////////////////////Fin-Baterias agotadas y refuel Agotado///////////////////
+        
     }
     
 }

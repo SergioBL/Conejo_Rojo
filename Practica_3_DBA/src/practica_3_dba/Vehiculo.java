@@ -37,6 +37,7 @@ public class Vehiculo extends SingleAgent{
     private Boolean ESPERANDO;
     private Tipo tipo;
     private String conversacion_id;
+    private AgentID nombreVehiculo;
 
     /**
     *
@@ -47,6 +48,7 @@ public class Vehiculo extends SingleAgent{
         outbox = null;
         inbox = null;  
         finalizar = false;
+        nombreVehiculo= aid;
     }
     
     /**
@@ -123,7 +125,7 @@ public class Vehiculo extends SingleAgent{
 
     /**
     *
-    * @author 
+    * @author a
     */
     public void actuar() throws JSONException{
         
