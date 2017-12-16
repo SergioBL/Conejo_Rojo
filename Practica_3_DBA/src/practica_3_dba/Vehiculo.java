@@ -44,6 +44,7 @@ public class Vehiculo extends SingleAgent{
     private int energy;
     private boolean goal;
     private int scanner[][];
+    private String t;
 
     /**
     *
@@ -78,28 +79,31 @@ public class Vehiculo extends SingleAgent{
         //Recibimos la respuesta del servidor
         recibir_mensaje();
         //Si da error, la conexión falla
-        if(inbox.getPerformativeInt()==ACLMessage.REFUSE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
-            enviar_mensaje(recepcion.getString("details"), "pizarra", ACLMessage.REFUSE);
+        if(inbox.getPerformativeInt()==ACLMessage.REFUSE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){ 
+             enviar_mensaje(recepcion.getString("details"), "pizarra", ACLMessage.REFUSE);
             return false;
         }//En caso contrario, la conexión tiene exito y enviamos a pizarra quien somos y que somos
         else{
-            JSONObject datos = recepcion.getJSONObject("Capabilities"); 
-            fuelrate = recepcion.getInt("fuelrate");
-            range = recepcion.getInt("range");
+            JSONObject datos = recepcion.getJSONObject("capabilities"); 
+            fuelrate = datos.getInt("fuelrate");
+            range = datos.getInt("range");
             switch (range) {
                 case 7:
                     tipo = Tipo.CAMION;
+                      t = "CAMION";
                     break;
                 case 5:
                     tipo = Tipo.COCHE;
+                      t = "COCHE";
                     break;
                 default:
                     tipo = Tipo.AEREO;
+                     t = "AEREO";
                     break;
             }
             radar = new int [range][range];
             envio = new JSONObject();
-            envio.put("TipoVehiculo",tipo);
+            envio.put("TipoVehiculo",t);
             envio.put("ID",nombreVehiculo);
             enviar_mensaje("","Achernar",ACLMessage.QUERY_REF);
             recibir_mensaje();
@@ -110,7 +114,7 @@ public class Vehiculo extends SingleAgent{
                 actualizarDatos();
             
             envio = new JSONObject();
-            envio.put("TipoVehiculo",tipo);
+            envio.put("TipoVehiculo",t);
             envio.put("ID",nombreVehiculo);
             //Avisamos a pizarra
             enviar_mensaje(envio.toString(), "pizarra", ACLMessage.INFORM);
