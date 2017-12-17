@@ -149,7 +149,7 @@ public class Pizarra extends SingleAgent{
     
     /**
     *
-    * @author 
+    * @author Joaquin
     */
     public void moverAgente(String nombreAgent) throws JSONException{
         envio = new JSONObject();
@@ -159,7 +159,10 @@ public class Pizarra extends SingleAgent{
         //Enviamos el siguiente movimiento
         enviar_mensaje(envio.toString(),nombreAgent,ACLMessage.REQUEST);
     }
-    
+    /**
+    *
+    * @author Joaquin
+    */
     public void moverAgenteObjetivo(String nombreAgent) throws JSONException{
         envio = new JSONObject();
         envio.put("Accion","LlegaObjetivo");
@@ -167,7 +170,10 @@ public class Pizarra extends SingleAgent{
         //Enviamos el siguiente movimiento
         enviar_mensaje(envio.toString(),nombreAgent,ACLMessage.REQUEST);
     }
-    
+    /**
+    *
+    * @author Joaquin
+    */
     public void siguienteVehiculoObjetivo()throws JSONException{
         System.out.println("numero de cehiculos" +vehiculos.size());
             for (Map.Entry<String, Datosvehiculo> entry : vehiculos.entrySet()) {
@@ -182,7 +188,17 @@ public class Pizarra extends SingleAgent{
     }
     /**
     *
-    * @author 
+    * @author Joaquin
+    */
+    public void obtieneMapaComun() throws JSONException{
+        
+         for(int i = 0; i < mapa.length(); i+=1000)
+            for(int j = 0; j < 1000; j++)
+                mapa_compartido[i/1000][j] = mapa.getInt(i+j);
+    }
+    /**
+    *
+    * @author Joaquin
     */
     @Override
     public void execute(){
@@ -203,7 +219,7 @@ public class Pizarra extends SingleAgent{
     
     /**
     *
-    * @author 
+    * @author Joaquin
     */
     @Override
     public void finalize(){
@@ -216,7 +232,7 @@ public class Pizarra extends SingleAgent{
     
     /**
     *
-    * @author 
+    * @author Joaquin
     */
     @Override
     public void init(){
@@ -225,7 +241,7 @@ public class Pizarra extends SingleAgent{
     
     /**
     *
-    * @author 
+    * @author Joaquin
     */
     public void actuar() throws JSONException{
           
@@ -289,6 +305,8 @@ public class Pizarra extends SingleAgent{
                        
                 vActualDatos.visto = recepcion.getBoolean("visto");
                 vActualDatos.sensor = recepcion.getJSONArray("MapaAux");
+                mapa = recepcion.getJSONArray("MapaAux");
+                obtieneMapaComun();
                 vActualDatos.x = recepcion.getInt("x");
                 vActualDatos.y = recepcion.getInt("y");
                 vActualDatos.Bateria = recepcion.getInt("Bateria");
