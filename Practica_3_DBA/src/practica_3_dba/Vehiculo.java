@@ -44,7 +44,6 @@ public class Vehiculo extends SingleAgent{
     private int energy;
     private boolean goal;
     private int scanner[][];
-    private String t;
     private String nombre;
 
     /**
@@ -92,21 +91,15 @@ public class Vehiculo extends SingleAgent{
             switch (range) {
                 case 11:
                     tipo = Tipo.CAMION;
-                      t = "CAMION";
                     break;
                 case 5:
                     tipo = Tipo.COCHE;
-                      t = "COCHE";
                     break;
                 default:
                     tipo = Tipo.AEREO;
-                     t = "AEREO";
                     break;
             }
             radar = new int [range][range];
-            envio = new JSONObject();
-            envio.put("TipoVehiculo",t);
-            envio.put("ID",nombreVehiculo);
             enviar_mensaje("","Achernar",ACLMessage.QUERY_REF);
             recibir_mensaje();
             if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
@@ -116,7 +109,7 @@ public class Vehiculo extends SingleAgent{
                 actualizarDatos();
             
             envio = new JSONObject();
-            envio.put("TipoVehiculo",t);
+            envio.put("TipoVehiculo",tipo.toString());
             envio.put("ID",nombreVehiculo);
             //Avisamos a pizarra
             enviar_mensaje(envio.toString(), "pizarra", ACLMessage.INFORM);
