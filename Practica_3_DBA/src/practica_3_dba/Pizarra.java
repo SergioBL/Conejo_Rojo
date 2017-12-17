@@ -42,6 +42,7 @@ public class Pizarra extends SingleAgent{
     private int contadorConexion;
     private int EnergiaTotal;
     private int NvehiculosObjetivo;
+    int a;
     
     class Datosvehiculo{
         public Tipo tipoDeVehiculo; 
@@ -64,6 +65,8 @@ public class Pizarra extends SingleAgent{
         finalizar = false;
         mapa_compartido = new int [1000][1000];
         mapa= new JSONArray();
+        for(int i=0;i<2000;i++)
+            mapa.put(0);
         scanner = new JSONArray();
         pasosComun = 0;
         objetivoEncontrado=false;
@@ -72,6 +75,7 @@ public class Pizarra extends SingleAgent{
         vehiculos = new HashMap<String, Datosvehiculo>();
         EnergiaTotal=0;
         NvehiculosObjetivo=0;
+        a=0;
     }
     
     /**
@@ -85,7 +89,7 @@ public class Pizarra extends SingleAgent{
         recibir_mensaje();
         recibir_mensaje();
         envio = new JSONObject();
-        envio.put("ID",conversacion_id);
+        envio.put("ID",conversacion_id);       
         envio.put("Mapa",mapa);
         envio.put("Pasos", pasosComun);
         for(int i = 1; i <= 4; i++)
@@ -252,6 +256,20 @@ public class Pizarra extends SingleAgent{
                           
                          if(contadorConexion>=4){
                              System.out.println("Conexion Terminada, los 4 vehiculos asignados" + inbox.getSender().toString());
+                              for (Map.Entry<String, Datosvehiculo> entry : vehiculos.entrySet()) {
+                                  
+                            Datosvehiculo vehiculo = new Datosvehiculo();
+                            vehiculo = entry.getValue();
+                            if(vehiculo.tipoDeVehiculo==Tipo.COCHE){
+                               a++;
+                                System.out.println("Hay " +a +" tipo coche" );
+                            }
+                            if(a==0){
+                                System.out.println("No Hay " +a +" ningun coche.Cerrando.. Reinicie" );
+                            }
+                            
+                            
+                        }
                               //Enviamos el primer movimiento
                               Datosvehiculo vActualD0 = vehiculos.get(inbox.getSender().toString());
                                if(vActualD0.tipoDeVehiculo== Tipo.COCHE){
@@ -273,7 +291,7 @@ public class Pizarra extends SingleAgent{
                        Datosvehiculo vActualDatos = vehiculos.get(vActualID);
                        
                        vActualDatos.visto = recepcion.getBoolean("visto");
-                      // vActualDatos.sensor = recepcion.getJSONArray("MapaAux");
+                       vActualDatos.sensor = recepcion.getJSONArray("MapaAux");
                        vActualDatos.x = recepcion.getInt("x");
                        vActualDatos.y = recepcion.getInt("y");
                        vActualDatos.Bateria = recepcion.getInt("Bateria");

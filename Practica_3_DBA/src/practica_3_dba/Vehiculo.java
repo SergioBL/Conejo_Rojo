@@ -743,13 +743,13 @@ public class Vehiculo extends SingleAgent{
                     else
                         actualizarDatos();
 
-                    int map[] = new int[1000000];
-                    //JSONArray map= new JSONArray();
+                    //int map[] = new int[1000000];
+                    JSONArray map= new JSONArray();
                     int k = 0;
                     for(int i = 0; i < 1000; i++)
                         for(int j = 0; j < 1000; j++, k++)
-                            map[k] = mapa[i][j];
-                            //map.put(mapa[i][j]);
+                           // map[k] = mapa[i][j];
+                            map.put(mapa[i][j]);
                     
                     if(veoObjetivo())
                         envio.put("visto",true);
@@ -808,20 +808,20 @@ public class Vehiculo extends SingleAgent{
                 else{
                     if(bateria <= 1){
                         envio = new JSONObject();
-                        envio.put("command","refuel");
-                        enviar_mensaje(envio.toString(),"Achernar",ACLMessage.REQUEST);
-                        recibir_mensaje();
-                        
-                        if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
-                            finalizar = true;
-                            enviar_mensaje(recepcion.getString("details"),"pizarra",ACLMessage.REFUSE);
-                        }
-                        else{
-                            if(inbox.getPerformativeInt()==ACLMessage.INFORM){
+                         envio.put("command","refuel");
+                         enviar_mensaje(envio.toString(),"Achernar",ACLMessage.REQUEST);
+                         recibir_mensaje();
+                          		                          
+                         if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
+                             finalizar = true;
+                             enviar_mensaje(recepcion.getString("details"),"pizarra",ACLMessage.REFUSE);
+                         }
+                         else{
+                             if(inbox.getPerformativeInt()==ACLMessage.INFORM){
                                 System.out.print(recepcion.getString("Result") + ", Bateria recargada ");
-                            }
-                            
-                        }
+                             }
+                             
+                         }
                     }
                 }
             }   
