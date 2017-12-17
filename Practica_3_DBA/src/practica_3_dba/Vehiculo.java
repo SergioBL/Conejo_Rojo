@@ -147,6 +147,10 @@ public class Vehiculo extends SingleAgent{
         actualizarMapaComun();
     }
     
+    /**
+    *
+    * @author Alvaro
+    */
     public void inicializarMapa(){
         for(int i=0; i<1000; i++){
             for(int j=0; j<1000; j++){
@@ -276,7 +280,10 @@ public class Vehiculo extends SingleAgent{
     }
 
     
-    
+    /**
+    *
+    * @author Alvaro
+    */
     public String movimientoTerrestreConScanner(){
         String movimiento = "";
         int menor_paso = 50000;
@@ -400,8 +407,6 @@ public class Vehiculo extends SingleAgent{
     /**
     *
     * @author Alex
-    * @throws org.codehaus.jettison.json.JSONException
-    * @throws java.lang.InterruptedException
     */
     public String busquedaTerrestre(){
         String movimiento = "moveN";
@@ -452,6 +457,10 @@ public class Vehiculo extends SingleAgent{
         return movimiento;
     }
     
+    /**
+    *
+    * @author Alvaro
+    */
     public String movimientoAereoConScanner(){
         String movimiento = "";
         int menor_paso = 50000;
@@ -573,6 +582,10 @@ public class Vehiculo extends SingleAgent{
         return movimiento;
     }
     
+    /**
+    *
+    * @author Alex
+    */
     public boolean veoObjetivo(){
         boolean visto = false;
         
@@ -586,8 +599,6 @@ public class Vehiculo extends SingleAgent{
     /**
     *
     * @author Alex
-    * @throws org.codehaus.jettison.json.JSONException
-    * @throws java.lang.InterruptedException
     */
     public String busquedaAerea(){
         String movimiento = "moveN";
@@ -638,6 +649,10 @@ public class Vehiculo extends SingleAgent{
         return movimiento;
     }
     
+    /**
+    *
+    * @author Alvaro
+    */
     public String comprobarObjetivoAlrededor(String ultimo_movimiento){
         String movimiento = ultimo_movimiento;
         
