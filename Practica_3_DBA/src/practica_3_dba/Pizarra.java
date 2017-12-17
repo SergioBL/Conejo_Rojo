@@ -8,6 +8,7 @@ package practica_3_dba;
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
 import es.upv.dsic.gti_ia.core.SingleAgent;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,7 +18,7 @@ import org.codehaus.jettison.json.JSONObject;
 
 /**
  *
- * @author salome
+ * @author joaquin
  */
 public class Pizarra extends SingleAgent{
     
@@ -27,7 +28,7 @@ public class Pizarra extends SingleAgent{
     private ACLMessage outbox, inbox;
     private int mapa_compartido[][];
     private int scanner_compartido[][];
-    private Map<String, vehiculo> vehiculos;
+    private Map<String, Datosvehiculo> vehiculos;
     private boolean finalizar;
     private String conversacion_id;
     private boolean objetivoEncontrado;
@@ -37,17 +38,20 @@ public class Pizarra extends SingleAgent{
     private Tipo tipo;
     private boolean conexionTerminada;
     private int contadorConexion;
-    class vehiculo{
-    public Tipo tipoDeVehiculo; 
-    public int Bateria;  
-    public int x; 
-    public int y;
-    private JSONArray sensor;
+    private int EnergiaTotal;
+    
+    class Datosvehiculo{
+        public Tipo tipoDeVehiculo; 
+        public int Bateria;  
+        public int x; 
+        public int y;
+        private JSONArray sensor;
+        private boolean visto;
  };
 
     /**
     *
-    * @author Alex Sergio Salomé Joaquín
+    * @author Joaquín
     */
     public Pizarra(AgentID aid) throws Exception {
         super(aid);
@@ -60,6 +64,8 @@ public class Pizarra extends SingleAgent{
         objetivoEncontrado=false;
         conexionTerminada=false;
         contadorConexion=0;
+        vehiculos = new HashMap<String, Datosvehiculo>();
+        EnergiaTotal=0;
     }
     
     /**
@@ -141,7 +147,7 @@ public class Pizarra extends SingleAgent{
                               envio.put("BuscaObjetivo", mapa);
                               envio.put("Pasos", pasosComun);
                               //Enviamos el siguiente movimiento
-                              enviar_mensaje(envio.toString(),"vehiculo1",ACLMessage.REQUEST);
+                              enviar_mensaje(envio.toString(),nombreAgent,ACLMessage.REQUEST);
     }
     
     /**
@@ -211,30 +217,47 @@ public class Pizarra extends SingleAgent{
                                 tipo = Tipo.AEREO; 
                                break;
                          }
-                         ///?¿?¿?¿?¿?¿?¿?¿? esto está mal estás creando nuevos agentes ¿lo sabes?
-                        vehiculo v= new vehiculo();
-                        
-                        v.tipoDeVehiculo=tipo;
-                        //v.Bateria=recepcion.getInt("Batery");
-                        //v.x=recepcion.getInt("x");
-                        //v.y=recepcion.getInt("y");
-                        // v.sensor=recepcion.getJSONArray("sensor");
-                        
-                       // vehiculos.put(recepcion.getString("ID"),v);
-                         System.out.println("Vehiculo guardado en pizarra: " + recepcion.getString("ID"));
-                         contadorConexion++;
+                          Datosvehiculo v= new Datosvehiculo();                       
+                          v.tipoDeVehiculo=tipo; 
+                          vehiculos.put(recepcion.getString("ID"),v);
+                          
+                          System.out.println("Vehiculo guardado en pizarra: " + inbox.getSender().toString());
+                          contadorConexion++;
+                          
                          if(contadorConexion>=4){
-                             System.out.println("Conexion Terminada, los 4 vehiculos asignados");
+                             System.out.println("Conexion Terminada, los 4 vehiculos asignados" + inbox.getSender().toString());
                               //Enviamos el primer movimiento
-                              moverAgente("vehiculo1","ninguno");
+                              Datosvehiculo vActualD0 = vehiculos.get(inbox.getSender().toString());
+                               if(vActualD0.tipoDeVehiculo== Tipo.COCHE){
+                              moverAgente(inbox.getSender().toString(),"ninguno");}
+                             
                             }
+                         
                 }else if(contadorConexion>=4){
-                               moverAgente("vehiculo1","ninguno");
+                    
+                               Datosvehiculo vActualD = vehiculos.get(inbox.getSender().toString());
+                               if(vActualD.tipoDeVehiculo== Tipo.COCHE){
+                               moverAgente(inbox.getSender().toString(),"ninguno");}
+                               
                 }
                 /////////mensaje de que encuentra objetivo//////////
-                if(recepcion.has("MapaAux")){
+                if(recepcion.has("visto")){
                     
-                    System.out.println("enhorabuena,Objetivo encontrado");
+                       String vActualID = inbox.getSender().toString();
+                       Datosvehiculo vActualDatos = vehiculos.get(vActualID);
+                       vActualDatos.visto = recepcion.getBoolean("visto");
+                      // vActualDatos.sensor = recepcion.getJSONArray("MapaAux");
+                       vActualDatos.x = recepcion.getInt("x");
+                       vActualDatos.y = recepcion.getInt("y");
+                       vActualDatos.Bateria = recepcion.getInt("Bateria");
+                       EnergiaTotal = recepcion.getInt("energy");
+                       vehiculos.put(vActualID, vActualDatos);
+                       
+                       
+                    if(recepcion.getBoolean("visto")){
+                        System.out.println("enhorabuena,Objetivo encontrado por = " + vActualID);
+                        objetivoEncontrado=true;
+                    }
                 }
         }
         /*

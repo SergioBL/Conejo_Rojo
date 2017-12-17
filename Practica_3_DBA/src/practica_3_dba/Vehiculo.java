@@ -45,6 +45,7 @@ public class Vehiculo extends SingleAgent{
     private boolean goal;
     private int scanner[][];
     private String t;
+    private String nombre;
 
     /**
     *
@@ -61,6 +62,7 @@ public class Vehiculo extends SingleAgent{
         mapa = new int[1000][1000];
         paso = 0;
         scanner = null;
+        //this.nombre = nombre;
         inicializarMapa();
     }
     
@@ -164,7 +166,7 @@ public class Vehiculo extends SingleAgent{
     * @author Alex
     */
     public void actualizarMapaComun(){
-        System.out.println("Vehiculo: actualizo mapa comun");
+        System.out.println("Vehiculo " +nombreVehiculo+" : actualizo mapa comun");
         int medio;
         if(range==11)
             medio=3;
@@ -186,7 +188,7 @@ public class Vehiculo extends SingleAgent{
     * @author Alex
     */
     public void obtieneMapaComun() throws JSONException{
-        System.out.println("Vehiculo: obtengo mapa comun");
+        System.out.println("Vehiculo " +nombreVehiculo+" : obtengo mapa comun");
         JSONArray map;
         if(recepcion.has("ID"))
             map = recepcion.getJSONArray("Mapa");
@@ -742,20 +744,23 @@ public class Vehiculo extends SingleAgent{
                         actualizarDatos();
 
                     int map[] = new int[1000000];
+                    //JSONArray map= new JSONArray();
                     int k = 0;
                     for(int i = 0; i < 1000; i++)
                         for(int j = 0; j < 1000; j++, k++)
                             map[k] = mapa[i][j];
+                            //map.put(mapa[i][j]);
                     
                     if(veoObjetivo())
                         envio.put("visto",true);
                     else
                         envio.put("visto",false);
-                    envio.put("MapaAux",map);
-                    envio.put("x", gps_x);
-                    envio.put("x", gps_y);
-                    envio.put("energy", energy);
-                    enviar_mensaje(envio.toString(), "pizarra", ACLMessage.INFORM);  
+                        envio.put("MapaAux",map);
+                        envio.put("x", gps_x);
+                        envio.put("y", gps_y);
+                        envio.put("energy", energy);
+                        envio.put("Bateria", bateria);
+                        enviar_mensaje(envio.toString(), "pizarra", ACLMessage.INFORM);  
                 }
             }//Alvaro y sergio
             else if(recepcion.getString("Accion").equals("LlegaObjetivo")){
