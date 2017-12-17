@@ -807,7 +807,21 @@ public class Vehiculo extends SingleAgent{
                 }
                 else{
                     if(bateria <= 1){
+                        envio = new JSONObject();
+                        envio.put("command","refuel");
+                        enviar_mensaje(envio.toString(),"Achernar",ACLMessage.REQUEST);
+                        recibir_mensaje();
                         
+                        if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
+                            finalizar = true;
+                            enviar_mensaje(recepcion.getString("details"),"pizarra",ACLMessage.REFUSE);
+                        }
+                        else{
+                            if(inbox.getPerformativeInt()==ACLMessage.INFORM){
+                                System.out.print(recepcion.getString("Result") + ", Bateria recargada ");
+                            }
+                            
+                        }
                     }
                 }
             }   
