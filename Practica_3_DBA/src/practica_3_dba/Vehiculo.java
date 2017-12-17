@@ -88,7 +88,7 @@ public class Vehiculo extends SingleAgent{
             fuelrate = datos.getInt("fuelrate");
             range = datos.getInt("range");
             switch (range) {
-                case 7:
+                case 11:
                     tipo = Tipo.CAMION;
                       t = "CAMION";
                     break;
@@ -139,7 +139,7 @@ public class Vehiculo extends SingleAgent{
             for(int j = 0; j < range; j++)
                 radar[i/range][j] = rad.getInt(i+j);
         
-        System.out.print("Reconocimiento: actualizo radar ");
+        System.out.print("Vehiculo: actualizo radar ");
         for(int i = 0; i < range; i++)
             for(int j = 0; j < range; j++)
                 System.out.print(radar[i][j] + ", ");
@@ -160,8 +160,9 @@ public class Vehiculo extends SingleAgent{
     * @author Alex
     */
     public void actualizarMapaComun(){
+        System.out.println("Vehiculo: actualizo mapa comun");
         int medio;
-        if(range==7)
+        if(range==11)
             medio=3;
         else if(range==5)
             medio=2;
@@ -181,6 +182,7 @@ public class Vehiculo extends SingleAgent{
     * @author Alex
     */
     public void obtieneMapaComun() throws JSONException{
+        System.out.println("Vehiculo: obtengo mapa comun");
         JSONArray map;
         if(recepcion.has("ID"))
             map = recepcion.getJSONArray("Mapa");
@@ -235,7 +237,7 @@ public class Vehiculo extends SingleAgent{
                 conversacion_id = recepcion.getString("ID");
                 obtieneMapaComun();
             }
-        }else
+        }else if(inbox.getPerformativeInt()!=ACLMessage.REQUEST)
             inReplyTo = inbox.getReplyWith();
     }
     
@@ -395,6 +397,61 @@ public class Vehiculo extends SingleAgent{
         return movimiento;
     }
     
+    /**
+    *
+    * @author Alex
+    * @throws org.codehaus.jettison.json.JSONException
+    * @throws java.lang.InterruptedException
+    */
+    public String busquedaTerrestre(){
+        String movimiento = "moveN";
+        int menor_paso = 50000;
+        
+        if(radar[1][1] != 1 && radar[1][1] != 4 && radar[1][1] != 2){
+            movimiento = "moveNW";                      
+            menor_paso = mapa[1000/2 + gps_y-1][1000/2 + gps_x-1];
+        }
+
+        if(radar[1][2] != 1 && radar[1][2] != 4 && mapa[1000/2 + gps_y-1][1000/2 + gps_x] <= menor_paso && radar[1][2] != 2){
+                movimiento = "moveN";
+                menor_paso = mapa[1000/2 + gps_y-1][1000/2 + gps_x];
+        }             
+
+        if(radar[1][3] != 1 && radar[1][3] != 4 && mapa[1000/2 + gps_y-1][1000/2 + gps_x+1] <= menor_paso && radar[1][3] != 2){
+                movimiento = "moveNE";
+                menor_paso = mapa[1000/2 + gps_y-1][1000/2 + gps_x+1];
+        }
+
+       if(radar[2][1] != 1 && radar[2][1] != 4 && mapa[1000/2 + gps_y][1000/2 + gps_x-1] <= menor_paso && radar[2][1] != 2){
+                movimiento = "moveW";
+                menor_paso = mapa[1000/2 + gps_y][1000/2 + gps_x-1];
+        }
+
+        if(radar[2][3] != 1 && radar[2][3] != 4 && mapa[1000/2 + gps_y][1000/2 + gps_x+1] <= menor_paso && radar[2][3] != 2){
+                movimiento = "moveE";
+                menor_paso = mapa[1000/2 + gps_y][1000/2 + gps_x+1];
+        }
+
+        if(radar[3][1] != 1 && radar[3][1] != 4 && mapa[1000/2 + gps_y+1][1000/2 + gps_x-1] <= menor_paso && radar[3][1] != 2){
+                movimiento = "moveSW";
+                menor_paso = mapa[1000/2 + gps_y+1][1000/2 + gps_x-1];
+        }
+        
+       if(radar[3][2] != 1 && radar[3][2] != 4 && mapa[1000/2 + gps_y+1][1000/2 + gps_x] <= menor_paso && radar[3][2] != 2){
+                movimiento = "moveS";
+                menor_paso = mapa[1000/2 + gps_y+1][1000/2 + gps_x];
+        }
+
+        if(radar[3][3] != 1 && radar[3][3] != 4 && mapa[1000/2 + gps_y+1][1000/2 + gps_x+1] <= menor_paso && radar[3][3] != 2){
+                movimiento = "moveSE";
+                menor_paso = mapa[1000/2 + gps_y+1][1000/2 + gps_x+1];
+        }
+        
+        movimiento = comprobarObjetivoAlrededor(movimiento);
+        
+        return movimiento;
+    }
+    
     public String movimientoAereoConScanner(){
         String movimiento = "";
         int menor_paso = 50000;
@@ -516,6 +573,71 @@ public class Vehiculo extends SingleAgent{
         return movimiento;
     }
     
+    public boolean veoObjetivo(){
+        boolean visto = false;
+        
+        for(int i = 0; i < range; i++)
+            for(int j = 0; j < range; j++)
+                if(radar[i][j]==3)
+                    visto=true;
+        return visto;
+    }
+    
+    /**
+    *
+    * @author Alex
+    * @throws org.codehaus.jettison.json.JSONException
+    * @throws java.lang.InterruptedException
+    */
+    public String busquedaAerea(){
+        String movimiento = "moveN";
+        int menor_paso = 50000;
+        
+        if(radar[1][1] != 4 && radar[1][1] != 2){
+            movimiento = "moveNW";                      
+            menor_paso = mapa[1000/2 + gps_y-1][1000/2 + gps_x-1];
+        }
+
+        if(radar[1][2] != 4 && mapa[1000/2 + gps_y-1][1000/2 + gps_x] <= menor_paso && radar[1][2] != 2){
+                movimiento = "moveN";
+                menor_paso = mapa[1000/2 + gps_y-1][1000/2 + gps_x];
+        }             
+
+        if(radar[1][3] != 4 && mapa[1000/2 + gps_y-1][1000/2 + gps_x+1] <= menor_paso && radar[1][3] != 2){
+                movimiento = "moveNE";
+                menor_paso = mapa[1000/2 + gps_y-1][1000/2 + gps_x+1];
+        }
+
+       if(radar[2][1] != 4 && mapa[1000/2 + gps_y][1000/2 + gps_x-1] <= menor_paso && radar[2][1] != 2){
+                movimiento = "moveW";
+                menor_paso = mapa[1000/2 + gps_y][1000/2 + gps_x-1];
+        }
+
+        if(radar[2][3] != 4 && mapa[1000/2 + gps_y][1000/2 + gps_x+1] <= menor_paso && radar[2][3] != 2){
+                movimiento = "moveE";
+                menor_paso = mapa[1000/2 + gps_y][1000/2 + gps_x+1];
+        }
+
+        if(radar[3][1] != 4 && mapa[1000/2 + gps_y+1][1000/2 + gps_x-1] <= menor_paso && radar[3][1] != 2){
+                movimiento = "moveSW";
+                menor_paso = mapa[1000/2 + gps_y+1][1000/2 + gps_x-1];
+        }
+        
+       if(radar[3][2] != 4 && mapa[1000/2 + gps_y+1][1000/2 + gps_x] <= menor_paso && radar[3][2] != 2){
+                movimiento = "moveS";
+                menor_paso = mapa[1000/2 + gps_y+1][1000/2 + gps_x];
+        }
+
+        if(radar[3][3] != 4 && mapa[1000/2 + gps_y+1][1000/2 + gps_x+1] <= menor_paso && radar[3][3] != 2){
+                movimiento = "moveSE";
+                menor_paso = mapa[1000/2 + gps_y+1][1000/2 + gps_x+1];
+        }
+        
+        movimiento = comprobarObjetivoAlrededor(movimiento);
+        
+        return movimiento;
+    }
+    
     public String comprobarObjetivoAlrededor(String ultimo_movimiento){
         String movimiento = ultimo_movimiento;
         
@@ -556,29 +678,38 @@ public class Vehiculo extends SingleAgent{
     
     /**
     *
-    * @author
+    * @author Salomé Sergio Alex Alvaro
     * @throws org.codehaus.jettison.json.JSONException
     * @throws java.lang.InterruptedException
     */
     public void actuar() throws JSONException, InterruptedException{
         
-        //Busqueda
+        //Busqueda Salomé y alex
         if(inbox.getPerformativeInt()==ACLMessage.REQUEST){ 
             if(recepcion.getString("Accion").equals("Buscar")){
                 obtieneMapaComun();
+                //if bateria Salomé
                 if(bateria<=1){
                     //Codigo de salomé
-                }else{
+                }else{//else Alex
                     //Pensar movimiento
-
                     String movimiento = "moveN";
+                    if(tipo.equals(Tipo.CAMION) || tipo.equals(Tipo.COCHE)){
+                        movimiento = busquedaTerrestre();
+                    }
+                    
+                    else if(tipo.equals(Tipo.AEREO)){               
+                        movimiento = busquedaAerea();                      
+                    }
+                    
                     envio = new JSONObject();
                     envio.put("command",movimiento);
                     //Nos movemos
                     enviar_mensaje(envio.toString(),"Achernar",ACLMessage.REQUEST);
                     recibir_mensaje();
                 }
-
+                //Resto del if alex
+                
                 //Comrpobamos que no ha habido error al hablar con el servidor
                 if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD || inbox.getPerformativeInt()==ACLMessage.REFUSE){
                         finalizar =true;
@@ -600,14 +731,18 @@ public class Vehiculo extends SingleAgent{
                     for(int i = 0; i < 1000; i++)
                         for(int j = 0; j < 1000; j++, k++)
                             map[k] = mapa[i][j];
-
+                    
+                    if(veoObjetivo())
+                        envio.put("visto",true);
+                    else
+                        envio.put("visto",false);
                     envio.put("MapaAux",map);
                     envio.put("x", gps_x);
                     envio.put("x", gps_y);
                     envio.put("energy", energy);
                     enviar_mensaje(envio.toString(), "pizarra", ACLMessage.INFORM);  
                 }
-            }
+            }//Alvaro y sergio
             else if(recepcion.getString("Accion").equals("LlegaObjetivo")){
                 if(scanner == null){
                     obtieneScanner();
