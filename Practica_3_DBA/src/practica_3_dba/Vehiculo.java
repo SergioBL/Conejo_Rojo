@@ -763,7 +763,7 @@ public class Vehiculo extends SingleAgent{
                         envio.put("Pasos", paso);
                         enviar_mensaje(envio.toString(), "pizarra", ACLMessage.INFORM);  
                 }
-            }//Alvaro y sergio
+            }//Alvaro
             else if(recepcion.getString("Accion").equals("LlegaObjetivo")){
                 if(scanner == null){
                     obtieneScanner();
@@ -802,13 +802,11 @@ public class Vehiculo extends SingleAgent{
                             actualizarDatos();
                     }
                 }
-                
+                //Sergio
                 if(goal){
                     envio = new JSONObject();
                     envio.put("EnObjetivo", true);
-                    
-                    enviar_mensaje(envio.ToString(),"pizarra");
-                    
+                    enviar_mensaje(envio.toString(),"pizarra", ACLMessage.INFORM);                 
                 }
                 else{
                     if(bateria <= 1){
