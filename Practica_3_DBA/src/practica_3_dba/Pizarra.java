@@ -152,33 +152,33 @@ public class Pizarra extends SingleAgent{
     * @author 
     */
     public void moverAgente(String nombreAgent) throws JSONException{
-                                envio = new JSONObject();
-                              envio.put("Accion","Buscar");
-                              envio.put("BuscaObjetivo", mapa);
-                              envio.put("Pasos", pasosComun);
-                              //Enviamos el siguiente movimiento
-                              enviar_mensaje(envio.toString(),nombreAgent,ACLMessage.REQUEST);
+        envio = new JSONObject();
+        envio.put("Accion","Buscar");
+        envio.put("BuscaObjetivo", mapa);
+        envio.put("Pasos", pasosComun);
+        //Enviamos el siguiente movimiento
+        enviar_mensaje(envio.toString(),nombreAgent,ACLMessage.REQUEST);
     }
     
     public void moverAgenteObjetivo(String nombreAgent) throws JSONException{
-                                envio = new JSONObject();
-                              envio.put("Accion","LlegaObjetivo");
-                              envio.put("Scanner", scanner);
-                              //Enviamos el siguiente movimiento
-                              enviar_mensaje(envio.toString(),nombreAgent,ACLMessage.REQUEST);
+        envio = new JSONObject();
+        envio.put("Accion","LlegaObjetivo");
+        envio.put("Scanner", scanner);
+        //Enviamos el siguiente movimiento
+        enviar_mensaje(envio.toString(),nombreAgent,ACLMessage.REQUEST);
     }
     
     public void siguienteVehiculoObjetivo()throws JSONException{
-                   System.out.println("numero de cehiculos" +vehiculos.size());
-                       for (Map.Entry<String, Datosvehiculo> entry : vehiculos.entrySet()) {
-                            Datosvehiculo vehiculo = new Datosvehiculo();
-                            vehiculo = entry.getValue();
-                            if(!vehiculo.EnObjetivo){
-                                moverAgenteObjetivo(entry.getKey());
-                                System.out.println("moviendo a =" + entry.getKey() + " hacia objetivo" );
-                            }
+        System.out.println("numero de cehiculos" +vehiculos.size());
+            for (Map.Entry<String, Datosvehiculo> entry : vehiculos.entrySet()) {
+                Datosvehiculo vehiculo = new Datosvehiculo();
+                vehiculo = entry.getValue();
+                if(!vehiculo.EnObjetivo){
+                    moverAgenteObjetivo(entry.getKey());
+                    System.out.println("moviendo a =" + entry.getKey() + " hacia objetivo" );
+                }
                             
-                        }
+            }
     }
     /**
     *
@@ -233,80 +233,77 @@ public class Pizarra extends SingleAgent{
         if(!objetivoEncontrado){
             ///conexion
             if(recepcion.has("TipoVehiculo")){       
-                
-                       String t = recepcion.getString("TipoVehiculo");
+                String t = recepcion.getString("TipoVehiculo");
                        
-                         switch (t) {
-                             case "CAMION":
-                                tipo = Tipo.CAMION;
-                             break;
-                             case "COCHE":
-                                tipo = Tipo.COCHE;
-                             break;
-                             case "AEREO":
-                                tipo = Tipo.AEREO; 
-                               break;
+                switch (t) {
+                    case "CAMION":
+                        tipo = Tipo.CAMION;
+                    break;
+                    case "COCHE":
+                        tipo = Tipo.COCHE;
+                    break;
+                    case "AEREO":
+                        tipo = Tipo.AEREO; 
+                    break;
                          }
-                          Datosvehiculo v= new Datosvehiculo();                       
-                          v.tipoDeVehiculo=tipo; 
-                          vehiculos.put(recepcion.getString("ID"),v);
+                Datosvehiculo v= new Datosvehiculo();                       
+                v.tipoDeVehiculo=tipo; 
+                vehiculos.put(recepcion.getString("ID"),v);
                           
-                          System.out.println("Vehiculo guardado en pizarra: " + inbox.getSender().toString());
-                          contadorConexion++;
+                System.out.println("Vehiculo guardado en pizarra: " + inbox.getSender().toString());
+                contadorConexion++;
                           
-                         if(contadorConexion>=4){
-                             System.out.println("Conexion Terminada, los 4 vehiculos asignados" + inbox.getSender().toString());
-                              for (Map.Entry<String, Datosvehiculo> entry : vehiculos.entrySet()) {
+                if(contadorConexion>=4){
+                    System.out.println("Conexion Terminada, los 4 vehiculos asignados" + inbox.getSender().toString());
+                    for (Map.Entry<String, Datosvehiculo> entry : vehiculos.entrySet()) {
                                   
-                            Datosvehiculo vehiculo = new Datosvehiculo();
-                            vehiculo = entry.getValue();
-                            if(vehiculo.tipoDeVehiculo==Tipo.COCHE){
-                               a++;
-                                System.out.println("Hay " +a +" tipo coche" );
-                            }
-                            if(a==0){
-                                System.out.println("No Hay " +a +" ningun coche.Cerrando.. Reinicie" );
-                            }
-                            
-                            
+                        Datosvehiculo vehiculo = new Datosvehiculo();
+                        vehiculo = entry.getValue();
+                        if(vehiculo.tipoDeVehiculo==Tipo.COCHE){
+                            a++;
+                            System.out.println("Hay " +a +" tipo coche" );
                         }
-                              //Enviamos el primer movimiento
-                              Datosvehiculo vActualD0 = vehiculos.get(inbox.getSender().toString());
-                               if(vActualD0.tipoDeVehiculo== Tipo.COCHE){
-                              moverAgente(inbox.getSender().toString());}
-                             
-                            }
-                         
-                }else if(contadorConexion>=4){
-                    
-                               Datosvehiculo vActualD = vehiculos.get(inbox.getSender().toString());
-                               if(vActualD.tipoDeVehiculo== Tipo.COCHE){
-                               moverAgente(inbox.getSender().toString());}
-                               
-                }
-                /////////mensaje de que encuentra objetivo//////////
-                if(recepcion.has("visto")){
-                    
-                       String vActualID = inbox.getSender().toString();
-                       Datosvehiculo vActualDatos = vehiculos.get(vActualID);
-                       
-                       vActualDatos.visto = recepcion.getBoolean("visto");
-                       vActualDatos.sensor = recepcion.getJSONArray("MapaAux");
-                       vActualDatos.x = recepcion.getInt("x");
-                       vActualDatos.y = recepcion.getInt("y");
-                       vActualDatos.Bateria = recepcion.getInt("Bateria");
-                       vActualDatos.EnObjetivo = false;
-                       EnergiaTotal = recepcion.getInt("energy");
-                       vehiculos.put(vActualID, vActualDatos);
-                       
-                       
-                    if(recepcion.getBoolean("visto")){
-                        System.out.println("enhorabuena,Objetivo encontrado por = " + inbox.getSender().toString());
-                        objetivoEncontrado=true;
-                        moverAgenteObjetivo(inbox.getSender().toString());
+                        if(a==0){
+                            System.out.println("No Hay " +a +" ningun coche.Cerrando.. Reinicie" );
+                        }
                     }
+                    //Enviamos el primer movimiento
+                    Datosvehiculo vActualD0 = vehiculos.get(inbox.getSender().toString());
+                    if(vActualD0.tipoDeVehiculo== Tipo.COCHE){
+                        moverAgente(inbox.getSender().toString());}
+                             
                 }
-           }
+                         
+            }else if(contadorConexion>=4){
+                    
+                    Datosvehiculo vActualD = vehiculos.get(inbox.getSender().toString());
+                    if(vActualD.tipoDeVehiculo== Tipo.COCHE){
+                        moverAgente(inbox.getSender().toString());}
+                               
+            }
+                /////////mensaje de que encuentra objetivo//////////
+            if(recepcion.has("visto")){
+                    
+                String vActualID = inbox.getSender().toString();
+                Datosvehiculo vActualDatos = vehiculos.get(vActualID);
+                       
+                vActualDatos.visto = recepcion.getBoolean("visto");
+                vActualDatos.sensor = recepcion.getJSONArray("MapaAux");
+                vActualDatos.x = recepcion.getInt("x");
+                vActualDatos.y = recepcion.getInt("y");
+                vActualDatos.Bateria = recepcion.getInt("Bateria");
+                vActualDatos.EnObjetivo = false;
+                EnergiaTotal = recepcion.getInt("energy");
+                vehiculos.put(vActualID, vActualDatos);
+                       
+                       
+                if(recepcion.getBoolean("visto")){
+                    System.out.println("enhorabuena,Objetivo encontrado por = " + inbox.getSender().toString());
+                    objetivoEncontrado=true;
+                    moverAgenteObjetivo(inbox.getSender().toString());
+                }
+            }
+        }
         
         /////////////////////Fin-Busqueda///////////////////////////
         
@@ -321,13 +318,13 @@ public class Pizarra extends SingleAgent{
                     vehiculos.put(inbox.getSender().toString(), vActualDato);
                     NvehiculosObjetivo++;
                  }}
-              if(NvehiculosObjetivo<=4){
+            if(NvehiculosObjetivo<=4){
                 siguienteVehiculoObjetivo();
                 NvehiculosObjetivo++;
-              }else if(NvehiculosObjetivo>=4){
+            }else if(NvehiculosObjetivo>=4){
                  EnObjetivo=true;
                  System.out.println("Todos o casi todos en objetivo");
-              }
+            }
 
         }
         ////////////////////Fin-llegadaObjetivo////////////////////////////
@@ -335,7 +332,7 @@ public class Pizarra extends SingleAgent{
         ///////////////////////Baterias agotadas y refuel Agotado///////////////////
         
         if(recepcion.has("SinRefuel")){
-                 boolean sinRefuel = recepcion.getBoolean("SinRefuel"); 
+            boolean sinRefuel = recepcion.getBoolean("SinRefuel"); 
          //enviar CLOSE al server y recoger traza
          //finalizar=true;
         }
