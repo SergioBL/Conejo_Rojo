@@ -28,17 +28,20 @@ public class Pizarra extends SingleAgent{
     private ACLMessage outbox, inbox;
     private int mapa_compartido[][];
     private int scanner_compartido[][];
+    
     private Map<String, Datosvehiculo> vehiculos;
     private boolean finalizar;
     private String conversacion_id;
     private boolean objetivoEncontrado;
     private boolean EnObjetivo;//asociarlo a vehiculo
     private JSONArray mapa;
+    private JSONArray scanner;
     private int pasosComun;
     private Tipo tipo;
     private boolean conexionTerminada;
     private int contadorConexion;
     private int EnergiaTotal;
+    private int NvehiculosObjetivo;
     
     class Datosvehiculo{
         public Tipo tipoDeVehiculo; 
@@ -47,6 +50,7 @@ public class Pizarra extends SingleAgent{
         public int y;
         private JSONArray sensor;
         private boolean visto;
+        private boolean EnObjetivo;
  };
 
     /**
@@ -60,12 +64,14 @@ public class Pizarra extends SingleAgent{
         finalizar = false;
         mapa_compartido = new int [1000][1000];
         mapa= new JSONArray();
+        scanner = new JSONArray();
         pasosComun = 0;
         objetivoEncontrado=false;
         conexionTerminada=false;
         contadorConexion=0;
         vehiculos = new HashMap<String, Datosvehiculo>();
         EnergiaTotal=0;
+        NvehiculosObjetivo=0;
     }
     
     /**
@@ -141,7 +147,7 @@ public class Pizarra extends SingleAgent{
     *
     * @author 
     */
-    public void moverAgente(String nombreAgent, String objectivo) throws JSONException{
+    public void moverAgente(String nombreAgent) throws JSONException{
                                 envio = new JSONObject();
                               envio.put("Accion","Buscar");
                               envio.put("BuscaObjetivo", mapa);
@@ -150,6 +156,26 @@ public class Pizarra extends SingleAgent{
                               enviar_mensaje(envio.toString(),nombreAgent,ACLMessage.REQUEST);
     }
     
+    public void moverAgenteObjetivo(String nombreAgent) throws JSONException{
+                                envio = new JSONObject();
+                              envio.put("Accion","LlegaObjetivo");
+                              envio.put("Scanner", scanner);
+                              //Enviamos el siguiente movimiento
+                              enviar_mensaje(envio.toString(),nombreAgent,ACLMessage.REQUEST);
+    }
+    
+    public void siguienteVehiculoObjetivo()throws JSONException{
+                   System.out.println("numero de cehiculos" +vehiculos.size());
+                       for (Map.Entry<String, Datosvehiculo> entry : vehiculos.entrySet()) {
+                            Datosvehiculo vehiculo = new Datosvehiculo();
+                            vehiculo = entry.getValue();
+                            if(!vehiculo.EnObjetivo){
+                                moverAgenteObjetivo(entry.getKey());
+                                System.out.println("moviendo a =" + entry.getKey() + " hacia objetivo" );
+                            }
+                            
+                        }
+    }
     /**
     *
     * @author 
@@ -229,7 +255,7 @@ public class Pizarra extends SingleAgent{
                               //Enviamos el primer movimiento
                               Datosvehiculo vActualD0 = vehiculos.get(inbox.getSender().toString());
                                if(vActualD0.tipoDeVehiculo== Tipo.COCHE){
-                              moverAgente(inbox.getSender().toString(),"ninguno");}
+                              moverAgente(inbox.getSender().toString());}
                              
                             }
                          
@@ -237,7 +263,7 @@ public class Pizarra extends SingleAgent{
                     
                                Datosvehiculo vActualD = vehiculos.get(inbox.getSender().toString());
                                if(vActualD.tipoDeVehiculo== Tipo.COCHE){
-                               moverAgente(inbox.getSender().toString(),"ninguno");}
+                               moverAgente(inbox.getSender().toString());}
                                
                 }
                 /////////mensaje de que encuentra objetivo//////////
@@ -245,34 +271,46 @@ public class Pizarra extends SingleAgent{
                     
                        String vActualID = inbox.getSender().toString();
                        Datosvehiculo vActualDatos = vehiculos.get(vActualID);
+                       
                        vActualDatos.visto = recepcion.getBoolean("visto");
                       // vActualDatos.sensor = recepcion.getJSONArray("MapaAux");
                        vActualDatos.x = recepcion.getInt("x");
                        vActualDatos.y = recepcion.getInt("y");
                        vActualDatos.Bateria = recepcion.getInt("Bateria");
+                       vActualDatos.EnObjetivo = false;
                        EnergiaTotal = recepcion.getInt("energy");
                        vehiculos.put(vActualID, vActualDatos);
                        
                        
                     if(recepcion.getBoolean("visto")){
-                        System.out.println("enhorabuena,Objetivo encontrado por = " + vActualID);
+                        System.out.println("enhorabuena,Objetivo encontrado por = " + inbox.getSender().toString());
                         objetivoEncontrado=true;
+                        moverAgenteObjetivo(inbox.getSender().toString());
                     }
                 }
-        }
-        /*
+           }
+        
         /////////////////////Fin-Busqueda///////////////////////////
         
         /////////////////////Llegada-Obretivo///////////////////////
         
         if(objetivoEncontrado && !EnObjetivo){
             if(recepcion.has("EnObjetivo")){
-                 EnObjetivo = recepcion.getBoolean("EnObjetivo");
-                 
-                //nombre del vehiculo
-             }else if(recepcion.has("")){
-            }
-            
+                 if(recepcion.getBoolean("EnObjetivo")){
+                    System.out.println("vehiculo " + inbox.getSender().toString()+" enObjetivo");
+                    Datosvehiculo vActualDato = vehiculos.get(inbox.getSender().toString());
+                    vActualDato.EnObjetivo = recepcion.getBoolean("EnObjetivo");
+                    vehiculos.put(inbox.getSender().toString(), vActualDato);
+                    NvehiculosObjetivo++;
+                 }}
+              if(NvehiculosObjetivo<=4){
+                siguienteVehiculoObjetivo();
+                NvehiculosObjetivo++;
+              }else if(NvehiculosObjetivo>=4){
+                 EnObjetivo=true;
+                 System.out.println("Todos o casi todos en objetivo");
+              }
+
         }
         ////////////////////Fin-llegadaObjetivo////////////////////////////
         
@@ -284,7 +322,7 @@ public class Pizarra extends SingleAgent{
          //finalizar=true;
         }
         ///////////////////////Fin-Baterias agotadas y refuel Agotado///////////////////
-        */
+        
     }
     
 }
