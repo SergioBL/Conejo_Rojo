@@ -211,6 +211,7 @@ public class Pizarra extends SingleAgent{
                                 tipo = Tipo.AEREO; 
                                break;
                          }
+                         ///?¿?¿?¿?¿?¿?¿?¿? esto está mal estás creando nuevos agentes ¿lo sabes?
                         vehiculo v= new vehiculo();
                         
                         v.tipoDeVehiculo=tipo;
