@@ -760,6 +760,7 @@ public class Vehiculo extends SingleAgent{
                         envio.put("y", gps_y);
                         envio.put("energy", energy);
                         envio.put("Bateria", bateria);
+                        envio.put("Pasos", paso);
                         enviar_mensaje(envio.toString(), "pizarra", ACLMessage.INFORM);  
                 }
             }//Alvaro y sergio

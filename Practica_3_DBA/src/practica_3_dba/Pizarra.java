@@ -87,7 +87,9 @@ public class Pizarra extends SingleAgent{
         envio.put("world","map1");
         enviar_mensaje(envio.toString(), "Achernar", ACLMessage.SUBSCRIBE);
         recibir_mensaje();
+        if(recepcion.has("trace")){
         recibir_mensaje();
+        }
         envio = new JSONObject();
         envio.put("ID",conversacion_id);       
         envio.put("Mapa",mapa);
@@ -306,6 +308,7 @@ public class Pizarra extends SingleAgent{
                 vActualDatos.visto = recepcion.getBoolean("visto");
                 vActualDatos.sensor = recepcion.getJSONArray("MapaAux");
                 mapa = recepcion.getJSONArray("MapaAux");
+                pasosComun = recepcion.getInt("Pasos");
                 obtieneMapaComun();
                 vActualDatos.x = recepcion.getInt("x");
                 vActualDatos.y = recepcion.getInt("y");
