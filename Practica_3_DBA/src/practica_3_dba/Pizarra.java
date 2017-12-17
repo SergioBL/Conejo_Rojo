@@ -345,19 +345,23 @@ public class Pizarra extends SingleAgent{
             }else if(NvehiculosObjetivo>=4){
                  EnObjetivo=true;
                  System.out.println("Todos o casi todos en objetivo");
+                 
+                 envio = new JSONObject();
+                 envio.put("","");
+                 enviar_mensaje(envio.toString(),"achernar",ACLMessage.CANCEL);
+                 
+                 
             }
 
         }
         ////////////////////Fin-llegadaObjetivo////////////////////////////
         
-        ///////////////////////Baterias agotadas y refuel Agotado///////////////////
+        ///////////////////////fin///////////////////
         
-        if(recepcion.has("SinRefuel")){
-            boolean sinRefuel = recepcion.getBoolean("SinRefuel"); 
-         //enviar CLOSE al server y recoger traza
-         //finalizar=true;
+        if(recepcion.has("trace")){
+            System.out.println("Programa Terminado la traza es =  " + recepcion.getJSONArray("trace"));
         }
-        ///////////////////////Fin-Baterias agotadas y refuel Agotado///////////////////
+        ///////////////////////Fin-fin///////////////////
         
     }
     
