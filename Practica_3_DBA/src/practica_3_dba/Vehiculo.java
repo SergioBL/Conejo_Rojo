@@ -805,7 +805,7 @@ public class Vehiculo extends SingleAgent{
                 
                 if(goal){
                     envio = new JSONObject();
-                    envio.put("EnObjetivo");
+                    envio.put("EnObjetivo", true);
                     
                     enviar_mensaje(envio.ToString(),"pizarra");
                     
