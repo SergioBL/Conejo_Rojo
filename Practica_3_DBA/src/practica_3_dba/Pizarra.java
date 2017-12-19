@@ -63,9 +63,9 @@ public class Pizarra extends SingleAgent{
         outbox = null;
         inbox = null;  
         finalizar = false;
-        mapa_compartido = new int [1000][1000];
+        mapa_compartido = new int [500][500];
         mapa= new JSONArray();
-        for(int i=0;i<1000000;i++)
+        for(int i=0;i<250000;i++)
             mapa.put(0);
         scanner = new JSONArray();
         pasosComun = 0;
@@ -95,7 +95,7 @@ public class Pizarra extends SingleAgent{
         envio.put("Mapa",mapa);
         envio.put("Pasos", pasosComun);
         for(int i = 1; i <= 4; i++){
-            int aux = i+4;
+            int aux = i+8;
             enviar_mensaje(envio.toString(), "vehiculo"+aux, ACLMessage.REQUEST);
         }
         
@@ -107,7 +107,7 @@ public class Pizarra extends SingleAgent{
     * @author Alex Sergio Salomé Joaquín
     */
     public void enviar_mensaje(String mensaje, String receptor, int performativa){
-        System.out.println("Pizarra Envia: "+receptor);
+        System.out.println("Pizarra Envia: " +mensaje+receptor);
         outbox = new ACLMessage();
         outbox.setSender(getAid());
         outbox.setReceiver(new AgentID(receptor));
@@ -170,6 +170,8 @@ public class Pizarra extends SingleAgent{
     public void moverAgenteObjetivo(String nombreAgent) throws JSONException{
         envio = new JSONObject();
         envio.put("Accion","LlegaObjetivo");
+        for(int i=0; i<250000;i++)
+            scanner.put(0);
         envio.put("Scanner", scanner);
         //Enviamos el siguiente movimiento
         enviar_mensaje(envio.toString(),nombreAgent,ACLMessage.REQUEST);
@@ -196,9 +198,9 @@ public class Pizarra extends SingleAgent{
     */
     public void obtieneMapaComun() throws JSONException{
         
-         for(int i = 0; i < mapa.length(); i+=1000)
-            for(int j = 0; j < 1000; j++)
-                mapa_compartido[i/1000][j] = mapa.getInt(i+j);
+         for(int i = 0; i < mapa.length(); i+=500)
+            for(int j = 0; j < 500; j++)
+                mapa_compartido[i/500][j] = mapa.getInt(i+j);
     }
     /**
     *
