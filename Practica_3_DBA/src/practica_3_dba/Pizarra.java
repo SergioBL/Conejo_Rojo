@@ -65,7 +65,7 @@ public class Pizarra extends SingleAgent{
         finalizar = false;
         mapa_compartido = new int [1000][1000];
         mapa= new JSONArray();
-        for(int i=0;i<2000;i++)
+        for(int i=0;i<1000000;i++)
             mapa.put(0);
         scanner = new JSONArray();
         pasosComun = 0;
@@ -94,8 +94,10 @@ public class Pizarra extends SingleAgent{
         envio.put("ID",conversacion_id);       
         envio.put("Mapa",mapa);
         envio.put("Pasos", pasosComun);
-        for(int i = 1; i <= 4; i++)
-            enviar_mensaje(envio.toString(), "vehiculo"+i, ACLMessage.REQUEST);
+        for(int i = 1; i <= 4; i++){
+            int aux = i+4;
+            enviar_mensaje(envio.toString(), "vehiculo"+aux, ACLMessage.REQUEST);
+        }
         
         
     }
@@ -105,7 +107,7 @@ public class Pizarra extends SingleAgent{
     * @author Alex Sergio Salomé Joaquín
     */
     public void enviar_mensaje(String mensaje, String receptor, int performativa){
-        System.out.println("Pizarra Envia: " +mensaje+receptor);
+        System.out.println("Pizarra Envia: "+receptor);
         outbox = new ACLMessage();
         outbox.setSender(getAid());
         outbox.setReceiver(new AgentID(receptor));
@@ -119,7 +121,7 @@ public class Pizarra extends SingleAgent{
     * @author Alex Sergio Salomé Joaquín
     */
     public void enviar_mensaje(String mensaje, AgentID receptor, int performativa){
-        System.out.println("Pizarra envia: " +mensaje + " a "+receptor);
+        System.out.println("Pizarra envia: " + " a "+receptor);
         outbox = new ACLMessage();
         outbox.setSender(getAid());
         outbox.setReceiver(receptor);
@@ -177,7 +179,7 @@ public class Pizarra extends SingleAgent{
     * @author Joaquin
     */
     public void siguienteVehiculoObjetivo()throws JSONException{
-        System.out.println("numero de cehiculos" +vehiculos.size());
+        System.out.println("numero de vehiculos" +vehiculos.size());
             for (Map.Entry<String, Datosvehiculo> entry : vehiculos.entrySet()) {
                 Datosvehiculo vehiculo = new Datosvehiculo();
                 vehiculo = entry.getValue();

@@ -70,7 +70,7 @@ public class Vehiculo extends SingleAgent{
     * @author Alex
     */
     public boolean conexion() throws InterruptedException, JSONException{
-        //Recibimos el request de pizarra
+        //Recibimos el request de pizarra1
         recibir_mensaje();
         //Construimos el mensaje
         envio = new JSONObject();
@@ -81,9 +81,9 @@ public class Vehiculo extends SingleAgent{
         recibir_mensaje();
         //Si da error, la conexión falla
         if(inbox.getPerformativeInt()==ACLMessage.REFUSE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){ 
-             enviar_mensaje(recepcion.getString("details"), "pizarra", ACLMessage.REFUSE);
+             enviar_mensaje(recepcion.getString("details"), "pizarra1", ACLMessage.REFUSE);
             return false;
-        }//En caso contrario, la conexión tiene exito y enviamos a pizarra quien somos y que somos
+        }//En caso contrario, la conexión tiene exito y enviamos a pizarra1 quien somos y que somos
         else{
             JSONObject datos = recepcion.getJSONObject("capabilities"); 
             fuelrate = datos.getInt("fuelrate");
@@ -103,7 +103,7 @@ public class Vehiculo extends SingleAgent{
             enviar_mensaje("","Achernar",ACLMessage.QUERY_REF);
             recibir_mensaje();
             if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
-                enviar_mensaje(" ", "pizarra", ACLMessage.REFUSE);
+                enviar_mensaje(" ", "pizarra1", ACLMessage.REFUSE);
                 return false;
             }else
                 actualizarDatos();
@@ -111,8 +111,8 @@ public class Vehiculo extends SingleAgent{
             envio = new JSONObject();
             envio.put("TipoVehiculo",tipo.toString());
             envio.put("ID",nombreVehiculo);
-            //Avisamos a pizarra
-            enviar_mensaje(envio.toString(), "pizarra", ACLMessage.INFORM);
+            //Avisamos a pizarra1
+            enviar_mensaje(envio.toString(), "pizarra1", ACLMessage.INFORM);
             return true;
         }
             
@@ -253,7 +253,7 @@ public class Vehiculo extends SingleAgent{
                         recibir_mensaje();
                         actuar();
                     } catch (InterruptedException | JSONException ex) {
-                    Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Vehiculo.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
         } catch (InterruptedException | JSONException ex) {
@@ -723,16 +723,16 @@ public class Vehiculo extends SingleAgent{
                 //Comrpobamos que no ha habido error al hablar con el servidor
                 if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD || inbox.getPerformativeInt()==ACLMessage.REFUSE){
                         finalizar =true;
-                        enviar_mensaje(recepcion.getString("details"),"pizarra",ACLMessage.REFUSE);
+                        enviar_mensaje(recepcion.getString("details"),"pizarra1",ACLMessage.REFUSE);
                 }
                 else{
-                    //actualizamos los datos ya que nos hemos movido y se lo enviamos a pizarra
+                    //actualizamos los datos ya que nos hemos movido y se lo enviamos a pizarra1
                     envio = new JSONObject();
 
                     enviar_mensaje("","Achernar",ACLMessage.QUERY_REF);
                     recibir_mensaje();
                     if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD)
-                        enviar_mensaje(recepcion.getString("details"),"pizarra",ACLMessage.REFUSE);
+                        enviar_mensaje(recepcion.getString("details"),"pizarra1",ACLMessage.REFUSE);
                     else
                         actualizarDatos();
 
@@ -741,7 +741,6 @@ public class Vehiculo extends SingleAgent{
                     int k = 0;
                     for(int i = 0; i < 1000; i++)
                         for(int j = 0; j < 1000; j++, k++)
-                           // map[k] = mapa[i][j];
                             map.put(mapa[i][j]);
                     
                     if(veoObjetivo())
@@ -754,7 +753,7 @@ public class Vehiculo extends SingleAgent{
                         envio.put("energy", energy);
                         envio.put("Bateria", bateria);
                         envio.put("Pasos", paso);
-                        enviar_mensaje(envio.toString(), "pizarra", ACLMessage.INFORM);  
+                        enviar_mensaje(envio.toString(), "pizarra1", ACLMessage.INFORM);  
                 }
             }//Alvaro
             else if(recepcion.getString("Accion").equals("LlegaObjetivo")){
@@ -781,7 +780,7 @@ public class Vehiculo extends SingleAgent{
                     
                     if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD || inbox.getPerformativeInt()==ACLMessage.REFUSE){
                         finalizar =true;
-                        enviar_mensaje(recepcion.getString("details"),"pizarra",ACLMessage.REFUSE);
+                        enviar_mensaje(recepcion.getString("details"),"pizarra1",ACLMessage.REFUSE);
                     }
                     else{
                         
@@ -790,7 +789,7 @@ public class Vehiculo extends SingleAgent{
                         enviar_mensaje("","Achernar",ACLMessage.QUERY_REF);
                         recibir_mensaje();
                         if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD)
-                            enviar_mensaje(recepcion.getString("details"),"pizarra",ACLMessage.REFUSE);
+                            enviar_mensaje(recepcion.getString("details"),"pizarra1",ACLMessage.REFUSE);
                         else
                             actualizarDatos();
                     }
@@ -799,7 +798,7 @@ public class Vehiculo extends SingleAgent{
                 if(goal){
                     envio = new JSONObject();
                     envio.put("EnObjetivo", true);
-                    enviar_mensaje(envio.toString(),"pizarra", ACLMessage.INFORM);                 
+                    enviar_mensaje(envio.toString(),"pizarra1", ACLMessage.INFORM);                 
                 }
                 else{
                     if(bateria <= 1){
@@ -811,7 +810,7 @@ public class Vehiculo extends SingleAgent{
                         
                         if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
                             finalizar = true;
-                            enviar_mensaje(recepcion.getString("details"),"pizarra",ACLMessage.REFUSE);
+                            enviar_mensaje(recepcion.getString("details"),"pizarra1",ACLMessage.REFUSE);
                         }
                         else{
                             envio = new JSONObject();
@@ -820,7 +819,7 @@ public class Vehiculo extends SingleAgent{
                             recibir_mensaje();
                             
                             if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
-                                enviar_mensaje(recepcion.getString("details"),"pizarra",ACLMessage.REFUSE);
+                                enviar_mensaje(recepcion.getString("details"),"pizarra1",ACLMessage.REFUSE);
                             }
                             else{
                                 System.out.print(recepcion.getString("Result") + ", Bateria recargada ");
