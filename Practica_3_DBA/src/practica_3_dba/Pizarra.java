@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -41,6 +42,8 @@ public class Pizarra extends SingleAgent{
     private Tipo tipo;
     private int EnergiaTotal;
     private int NvehiculosObjetivo;
+    private MyDrawPanel m;
+    private JFrame jframe;
     
     class DatosVehiculo{
         public Tipo tipoVehiculo; 
@@ -200,8 +203,8 @@ public class Pizarra extends SingleAgent{
      *  @author Alex
      */
     public void rellenarMatrizScanner(int x, int y){
-        int pos_x = 500/2 + x;
-        int pos_y = 500/2 + y;
+        int pos_x = x;
+        int pos_y = y;
         scanner_compartido[pos_y][pos_x] = 0;
         for(int i = 0; i < 500; i++)
             for(int j = 0; j < 500; j++){
@@ -265,7 +268,7 @@ public class Pizarra extends SingleAgent{
         for (Map.Entry<String, DatosVehiculo> entry : vehiculos.entrySet()) {
             DatosVehiculo vehiculo = entry.getValue();
             //Solo buscan los coches
-            if(!objetivoEncontrado){
+            if(!objetivoEncontrado && vehiculo.tipoVehiculo.equals(tipo.COCHE)){
                 moverAgente(entry.getKey());
                 recibir_mensaje();
 
@@ -317,8 +320,16 @@ public class Pizarra extends SingleAgent{
     public void execute(){
         try {
             conexion();
+            jframe = new JFrame();
+            m = new MyDrawPanel(mapa_compartido);
+            jframe.add(m);
+            jframe.setSize(mapa_compartido.length, mapa_compartido.length);
+            jframe.setVisible(true);
+            jframe.setTitle("Gugel");
             while(!finalizar){
                 actuar();
+                m.Update(mapa_compartido);
+                m.repaint();
             }
         } catch (JSONException | InterruptedException ex) {
             Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
