@@ -9,6 +9,8 @@ import org.codehaus.jettison.json.JSONObject;
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
 import es.upv.dsic.gti_ia.core.SingleAgent;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -187,6 +189,8 @@ public class Vehiculo extends SingleAgent{
             for(int j = 0; j < range; j++){
                 if(radar[i][j]==1 || radar[i][j] == 2)
                     mapa[500/2 + gps_y - medio + i][500/2 + gps_x - medio + j] = 50000;
+                else if(radar[i][j]==3)
+                   mapa[500/2 + gps_y - medio + i][500/2 + gps_x - medio + j] = -1;
             }
         paso++;
         mapa[500/2 + gps_y][500/2 + gps_x] = paso;
@@ -424,6 +428,7 @@ public class Vehiculo extends SingleAgent{
     */
     public String busquedaTerrestre(){
         String movimiento = "moveN";
+        ArrayList<String> movimientos = new ArrayList();
         int menor_paso = 50000;
         int n, s, e, o, ne, no, se, so;
         
@@ -447,45 +452,113 @@ public class Vehiculo extends SingleAgent{
             se = radar[6][6];
         }
         
+        Random random = new Random();
+        
         if(no != 1 && no != 4 && no != 2){
             movimiento = "moveNW";                      
             menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x-1];
+            movimientos.add(movimiento);
         }
 
         if(n != 1 && n != 4 && mapa[500/2 + gps_y-1][500/2 + gps_x] <= menor_paso && n != 2){
+            if(menor_paso == mapa[500/2 + gps_y-1][500/2 + gps_x]){
                 movimiento = "moveN";
                 menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x];
+                movimientos.add(movimiento);
+            }
+            else{
+                movimiento = "moveN";
+                menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x];
+                movimientos.clear();
+                movimientos.add(movimiento);
+            }
         }             
 
         if(ne != 1 && ne != 4 && mapa[500/2 + gps_y-1][500/2 + gps_x+1] <= menor_paso && ne != 2){
+            if(menor_paso == mapa[500/2 + gps_y-1][500/2 + gps_x+1]){
                 movimiento = "moveNE";
                 menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x+1];
+                movimientos.add(movimiento);
+            }
+            else{
+                movimiento = "moveNE";
+                menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x+1];
+                movimientos.clear();
+                movimientos.add(movimiento);
+            }
         }
 
        if(o != 1 && o != 4 && mapa[500/2 + gps_y][500/2 + gps_x-1] <= menor_paso && o != 2){
+           if(menor_paso == mapa[500/2 + gps_y][500/2 + gps_x-1]){
+                    movimiento = "moveW";
+                    menor_paso = mapa[500/2 + gps_y][500/2 + gps_x-1];
+                    movimientos.add(movimiento);
+            }
+            else{
                 movimiento = "moveW";
                 menor_paso = mapa[500/2 + gps_y][500/2 + gps_x-1];
+                movimientos.clear();
+                movimientos.add(movimiento);
+           }
         }
 
         if(e != 1 && e != 4 && mapa[500/2 + gps_y][500/2 + gps_x+1] <= menor_paso && e != 2){
+            if(menor_paso == mapa[500/2 + gps_y][500/2 + gps_x+1]){
+                    movimiento = "moveE";
+                    menor_paso = mapa[500/2 + gps_y][500/2 + gps_x+1];
+                    movimientos.add(movimiento);
+            }
+            else{
                 movimiento = "moveE";
                 menor_paso = mapa[500/2 + gps_y][500/2 + gps_x+1];
+                movimientos.clear();
+                movimientos.add(movimiento);
+            }
         }
 
         if(so != 1 && so != 4 && mapa[500/2 + gps_y+1][500/2 + gps_x-1] <= menor_paso && so != 2){
+            if(menor_paso == mapa[500/2 + gps_y+1][500/2 + gps_x-1]){
+                    movimiento = "moveSW";
+                    menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x-1];
+                    movimientos.add(movimiento);
+            }
+            else{
                 movimiento = "moveSW";
                 menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x-1];
+                movimientos.clear();
+                movimientos.add(movimiento);
+            }
         }
         
        if(s != 1 && s != 4 && mapa[500/2 + gps_y+1][500/2 + gps_x] <= menor_paso && s != 2){
+           if(menor_paso == mapa[500/2 + gps_y+1][500/2 + gps_x]){
+                    movimiento = "moveS";
+                    menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x];
+                    movimientos.add(movimiento);
+            }
+            else{
                 movimiento = "moveS";
                 menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x];
+                movimientos.clear();
+                movimientos.add(movimiento);
+           }
         }
 
         if(se != 1 && se != 4 && mapa[500/2 + gps_y+1][500/2 + gps_x+1] <= menor_paso && se != 2){
+            if(menor_paso == mapa[500/2 + gps_y+1][500/2 + gps_x+1]){
+                    movimiento = "moveSE";
+                    menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x+1];
+                    movimientos.add(movimiento);
+            }
+            else{
                 movimiento = "moveSE";
                 menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x+1];
+                movimientos.clear();
+                movimientos.add(movimiento);
+            }
         }
+        
+        movimiento = movimientos.get(random.nextInt(movimientos.size()));
         
         movimiento = comprobarObjetivoAlrededor(movimiento);
         
@@ -636,8 +709,8 @@ public class Vehiculo extends SingleAgent{
     */
     public String busquedaAerea(){
         String movimiento = "moveN";
+        ArrayList<String> movimientos = new ArrayList();
         int menor_paso = 50000;
-        
         int n, s, e, o, ne, no, se, so;
         
         no = radar[0][0];
@@ -650,49 +723,115 @@ public class Vehiculo extends SingleAgent{
         se = radar[2][2];
         
         
+        Random random = new Random();
+        
         if(no != 4 && no != 2){
-            movimiento = "moveNW";
+            movimiento = "moveNW";                      
             menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x-1];
+            movimientos.add(movimiento);
         }
 
         if(n != 4 && mapa[500/2 + gps_y-1][500/2 + gps_x] <= menor_paso && n != 2){
+            if(menor_paso == mapa[500/2 + gps_y-1][500/2 + gps_x]){
                 movimiento = "moveN";
                 menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x];
+                movimientos.add(movimiento);
+            }
+            else{
+                movimiento = "moveN";
+                menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x];
+                movimientos.clear();
+                movimientos.add(movimiento);
+            }
         }             
 
         if(ne != 4 && mapa[500/2 + gps_y-1][500/2 + gps_x+1] <= menor_paso && ne != 2){
+            if(menor_paso == mapa[500/2 + gps_y-1][500/2 + gps_x+1]){
                 movimiento = "moveNE";
                 menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x+1];
+                movimientos.add(movimiento);
+            }
+            else{
+                movimiento = "moveNE";
+                menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x+1];
+                movimientos.clear();
+                movimientos.add(movimiento);
+            }
         }
 
        if(o != 4 && mapa[500/2 + gps_y][500/2 + gps_x-1] <= menor_paso && o != 2){
+           if(menor_paso == mapa[500/2 + gps_y][500/2 + gps_x-1]){
+                    movimiento = "moveW";
+                    menor_paso = mapa[500/2 + gps_y][500/2 + gps_x-1];
+                    movimientos.add(movimiento);
+            }
+            else{
                 movimiento = "moveW";
                 menor_paso = mapa[500/2 + gps_y][500/2 + gps_x-1];
+                movimientos.clear();
+                movimientos.add(movimiento);
+           }
         }
 
         if(e != 4 && mapa[500/2 + gps_y][500/2 + gps_x+1] <= menor_paso && e != 2){
+            if(menor_paso == mapa[500/2 + gps_y][500/2 + gps_x+1]){
+                    movimiento = "moveE";
+                    menor_paso = mapa[500/2 + gps_y][500/2 + gps_x+1];
+                    movimientos.add(movimiento);
+            }
+            else{
                 movimiento = "moveE";
                 menor_paso = mapa[500/2 + gps_y][500/2 + gps_x+1];
+                movimientos.clear();
+                movimientos.add(movimiento);
+            }
         }
 
         if(so != 4 && mapa[500/2 + gps_y+1][500/2 + gps_x-1] <= menor_paso && so != 2){
+            if(menor_paso == mapa[500/2 + gps_y+1][500/2 + gps_x-1]){
+                    movimiento = "moveSW";
+                    menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x-1];
+                    movimientos.add(movimiento);
+            }
+            else{
                 movimiento = "moveSW";
                 menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x-1];
+                movimientos.clear();
+                movimientos.add(movimiento);
+            }
         }
         
        if(s != 4 && mapa[500/2 + gps_y+1][500/2 + gps_x] <= menor_paso && s != 2){
+           if(menor_paso == mapa[500/2 + gps_y+1][500/2 + gps_x]){
+                    movimiento = "moveS";
+                    menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x];
+                    movimientos.add(movimiento);
+            }
+            else{
                 movimiento = "moveS";
                 menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x];
+                movimientos.clear();
+                movimientos.add(movimiento);
+           }
         }
 
         if(se != 4 && mapa[500/2 + gps_y+1][500/2 + gps_x+1] <= menor_paso && se != 2){
+            if(menor_paso == mapa[500/2 + gps_y+1][500/2 + gps_x+1]){
+                    movimiento = "moveSE";
+                    menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x+1];
+                    movimientos.add(movimiento);
+            }
+            else{
                 movimiento = "moveSE";
                 menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x+1];
+                movimientos.clear();
+                movimientos.add(movimiento);
+            }
         }
         
-        movimiento = comprobarObjetivoAlrededor(movimiento);
+        movimiento = movimientos.get(random.nextInt(movimientos.size()));
         
-        System.out.println(movimiento);
+        movimiento = comprobarObjetivoAlrededor(movimiento);
         
         return movimiento;
     }
