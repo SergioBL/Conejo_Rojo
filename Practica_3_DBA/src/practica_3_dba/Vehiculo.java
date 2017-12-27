@@ -214,6 +214,10 @@ public class Vehiculo extends SingleAgent{
                 mapa[i/500][j] = map.getInt(i+j);
     }
     
+    /**
+    *
+    * @author Alex Alvaro
+    */
     public void obtieneScanner() throws JSONException{
         String sc = recepcion.getString("Scanner");
         
@@ -999,9 +1003,7 @@ public class Vehiculo extends SingleAgent{
                     
                     if(tipo.equals(Tipo.CAMION) || tipo.equals(Tipo.COCHE)){
                         movimiento = movimientoTerrestreConScanner();
-                    }
-                    
-                    else if(tipo.equals(Tipo.AEREO)){               
+                    }else if(tipo.equals(Tipo.AEREO)){               
                         movimiento = movimientoAereoConScanner();                      
                     }                                   
 
@@ -1013,9 +1015,7 @@ public class Vehiculo extends SingleAgent{
                     if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD || inbox.getPerformativeInt()==ACLMessage.REFUSE){
                         finalizar =true;
                         enviar_mensaje(recepcion.getString("details"),"pizarra2",ACLMessage.REFUSE);
-                    }
-                    else{
-                        
+                    }else{   
                         envio = new JSONObject();
 
                         enviar_mensaje("","Achernar",ACLMessage.QUERY_REF);
