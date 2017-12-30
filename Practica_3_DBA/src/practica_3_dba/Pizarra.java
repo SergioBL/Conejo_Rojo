@@ -37,7 +37,6 @@ public class Pizarra extends SingleAgent{
     private boolean objetivoEncontrado;
     private boolean EnObjetivo;//asociarlo a vehiculo
     private JSONArray mapa;
-    private JSONArray scanner;
     private int pasosComun;
     private Tipo tipo;
     private int EnergiaTotal;
@@ -113,6 +112,9 @@ public class Pizarra extends SingleAgent{
                 }
                 DatosVehiculo v= new DatosVehiculo();                       
                 v.tipoVehiculo=tipo;
+                v.x = recepcion.getInt("x");
+                v.y = recepcion.getInt("y");
+                v.EnObjetivo = false;
                 vehiculos.put(recepcion.getString("ID"),v);
                           
                 System.out.println("Vehiculo guardado en pizarra: " + inbox.getSender().toString());
@@ -227,15 +229,16 @@ public class Pizarra extends SingleAgent{
     *
     * @author Joaquin
     */
-    public void moverAgenteObjetivo(String nombreAgent) throws JSONException{
+    public void moverAgenteObjetivo(String nombreAgent) throws JSONException, InterruptedException{
         envio = new JSONObject();
         envio.put("Accion","LlegaObjetivo");
-        scanner = new JSONArray();
+        JSONArray scanner = new JSONArray();
         for(int i = 0; i < 500; i++)
             for(int j = 0; j < 500; j++)
                 scanner.put(scanner_compartido[i][j]);
         System.out.println("Sale sin problemas");
         CompresorArray c = new CompresorArray(scanner);
+        System.out.println("Sale sin problemas 1");
         String arrayComprimido = c.getStringComprimido();
         System.out.println("Sale sin problemas 2");
         envio.put("Scanner", arrayComprimido);
@@ -243,27 +246,31 @@ public class Pizarra extends SingleAgent{
         System.out.println("Sale sin problemas 3");
         enviar_mensaje(envio.toString(),nombreAgent,ACLMessage.REQUEST);
         System.out.println("Sale sin problemas 4");
+        recibir_mensaje();           
     }
     /**
     *
     * @author Joaquin
     */
-    public void siguienteVehiculoObjetivo()throws JSONException{
+    public void siguienteVehiculoObjetivo()throws JSONException, InterruptedException{
         System.out.println("numero de vehiculos" +vehiculos.size());
-        int distancia = 10000;
+        int distancia = 25001;
         String enviar = "";
         for (Map.Entry<String, DatosVehiculo> entry : vehiculos.entrySet()) {
             DatosVehiculo vehiculo = entry.getValue();
             if(!vehiculo.EnObjetivo){
                int dis = scanner_compartido[vehiculo.y][vehiculo.x];
-               if(dis>distancia){
+               if(dis<distancia){
                    distancia = dis;
                    enviar = entry.getKey();
                }
             }           
         }
-        if(!enviar.equals(""))
+        if(!enviar.equals("")){
+            System.out.println("Siguiente vehiculo: " + enviar);
             moverAgenteObjetivo(enviar);
+        }
+            
     }
     
     /**
@@ -366,7 +373,7 @@ public class Pizarra extends SingleAgent{
     
     /**
     *
-    * @author Joaquin Alex
+    * @author Joaquin Alex Alvaro
     */
     public void actuar() throws JSONException, InterruptedException{
           
@@ -378,16 +385,17 @@ public class Pizarra extends SingleAgent{
         if(objetivoEncontrado){
             if(recepcion.has("EnObjetivo")){
                  if(recepcion.getBoolean("EnObjetivo")){
+                    NvehiculosObjetivo++;
                     System.out.println("vehiculo " + inbox.getSender().toString()+" enObjetivo");
                     DatosVehiculo vActualDato = vehiculos.get(inbox.getSender().toString());
                     vActualDato.EnObjetivo = recepcion.getBoolean("EnObjetivo");
                     vehiculos.put(inbox.getSender().toString(), vActualDato);
-                    NvehiculosObjetivo++;
+                    System.out.println("Pizarra  -  HashVehiculos actualizados");
                  }
             }
             if(NvehiculosObjetivo<4){
                 siguienteVehiculoObjetivo();
-                NvehiculosObjetivo++;
+                //NvehiculosObjetivo++;
             }else if(NvehiculosObjetivo==4){
                  EnObjetivo=true;
                  System.out.println("Todos o casi todos en objetivo");
