@@ -66,13 +66,13 @@ public class Vehiculo extends SingleAgent{
         mapa = new int[500][500];
         paso = 0;
         scanner = null;
-        //this.nombre = nombre;
+        this.nombre = aid.name;
         inicializarMapa();
     }
     
     /**
     *
-    * @author Alex
+    * @author Alex  Joaquin
     */
     public boolean conexion() throws InterruptedException, JSONException{
         //Recibimos el request de pizarra2
@@ -86,7 +86,9 @@ public class Vehiculo extends SingleAgent{
         recibir_mensaje();
         //Si da error, la conexión falla
         if(inbox.getPerformativeInt()==ACLMessage.REFUSE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){ 
-             enviar_mensaje(recepcion.getString("details"), "pizarra2", ACLMessage.REFUSE);
+            envio = new JSONObject();
+            envio.put("details : "+this.nombre,recepcion.getString("details"));
+             enviar_mensaje(envio.toString(), "pizarra2", ACLMessage.REFUSE);
             return false;
         }//En caso contrario, la conexión tiene exito y enviamos a pizarra2 quien somos y que somos
         else{
@@ -915,7 +917,7 @@ public class Vehiculo extends SingleAgent{
     
     /**
     *
-    * @author Sergio Alex Alvaro
+    * @author Sergio Alex Alvaro Joaquin
     * @throws org.codehaus.jettison.json.JSONException
     * @throws java.lang.InterruptedException
     */
@@ -952,7 +954,9 @@ public class Vehiculo extends SingleAgent{
                 //Comrpobamos que no ha habido error al hablar con el servidor
                 if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD || inbox.getPerformativeInt()==ACLMessage.REFUSE){
                         finalizar =true;
-                        enviar_mensaje(recepcion.getString("details"),"pizarra2",ACLMessage.REFUSE);
+                        envio = new JSONObject();
+                        envio.put("details : "+this.nombre,recepcion.getString("details"));
+                        enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
                 }
                 else{
                     //actualizamos los datos ya que nos hemos movido y se lo enviamos a pizarra2
@@ -960,9 +964,9 @@ public class Vehiculo extends SingleAgent{
 
                     enviar_mensaje("","Achernar",ACLMessage.QUERY_REF);
                     recibir_mensaje();
-                    if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD)
-                        enviar_mensaje(recepcion.getString("details"),"pizarra2",ACLMessage.REFUSE);
-                    else
+                    if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
+                        enviar_mensaje(recepcion.toString(),"pizarra2",ACLMessage.REFUSE);
+                    }else
                         actualizarDatos();
 
                     //int map[] = new int[500000];
@@ -1007,7 +1011,9 @@ public class Vehiculo extends SingleAgent{
                         
                         if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
                             finalizar = true;
-                            enviar_mensaje(recepcion.getString("details"),"pizarra2",ACLMessage.REFUSE);
+                            envio = new JSONObject();
+                            envio.put("details : "+this.nombre,recepcion.getString("details"));
+                            enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
                         }
                         else{
                             envio = new JSONObject();
@@ -1016,7 +1022,9 @@ public class Vehiculo extends SingleAgent{
                             recibir_mensaje();
                             
                             if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
-                                enviar_mensaje(recepcion.getString("details"),"pizarra2",ACLMessage.REFUSE);
+                                envio = new JSONObject();
+                                envio.put("details : "+this.nombre,recepcion.getString("details"));
+                                enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
                             }
                             else{                               
                                 actualizarDatos();
@@ -1040,15 +1048,19 @@ public class Vehiculo extends SingleAgent{
 
                         if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD || inbox.getPerformativeInt()==ACLMessage.REFUSE){
                             finalizar =true;
-                            enviar_mensaje(recepcion.getString("details"),"pizarra2",ACLMessage.REFUSE);
+                            envio = new JSONObject();
+                            envio.put("details : "+this.nombre,recepcion.getString("details"));
+                            enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
                         }else{   
                             envio = new JSONObject();
 
                             enviar_mensaje("","Achernar",ACLMessage.QUERY_REF);
                             recibir_mensaje();
-                            if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD)
-                                enviar_mensaje(recepcion.getString("details"),"pizarra2",ACLMessage.REFUSE);
-                            else
+                            if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
+                                envio = new JSONObject();
+                                envio.put("details : "+this.nombre,recepcion.getString("details"));
+                                enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
+                            }else
                                 actualizarDatos();
                         }
                     }
