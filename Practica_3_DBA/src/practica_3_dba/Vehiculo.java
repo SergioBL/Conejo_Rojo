@@ -1009,11 +1009,15 @@ public class Vehiculo extends SingleAgent{
                         enviar_mensaje(envio.toString(),"Achernar",ACLMessage.REQUEST);
                         recibir_mensaje();
                         
-                        if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
+                        if(inbox.getPerformativeInt()==ACLMessage.REFUSE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
+                            if(recepcion.getString("details").equals("BAD ENERGY")){
+                                System.out.println("No hay mas recargas disponibles,Energia Agotada");
+                            }
                             finalizar = true;
                             envio = new JSONObject();
                             envio.put("details : "+this.nombre,recepcion.getString("details"));
                             enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
+                            
                         }
                         else{
                             envio = new JSONObject();
