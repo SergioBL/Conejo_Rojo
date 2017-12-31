@@ -301,7 +301,7 @@ public class Vehiculo extends SingleAgent{
     @Override
     public void finalize(){
         try {
-            System.out.println("Vehiculo " + fuelrate + " muerto");
+            System.out.println("Vehiculo " + getAid() + " muerto");
         } finally {
             super.finalize();
         }
@@ -318,134 +318,153 @@ public class Vehiculo extends SingleAgent{
         float menor_distancia = 50000;
         
         
-        int n, s, e, w, ne, nw, se, sw;
+        int rn, rs, re, rw, rne, rnw, rse, rsw;
+        int sn, ss, se, sw, sne, snw, sse, ssw;
         
         if(tipo.equals(Tipo.COCHE)){
-            nw = radar[1][1];
-            n = radar[1][2];
-            ne = radar[1][3];
-            w = radar[2][1];
-            e = radar[2][3];
-            sw = radar[3][1];
-            s = radar[3][2];
-            se = radar[3][3];
+            rnw = radar[1][1];
+            rn = radar[1][2];
+            rne = radar[1][3];
+            rw = radar[2][1];
+            re = radar[2][3];
+            rsw = radar[3][1];
+            rs = radar[3][2];
+            rse = radar[3][3];
+            
+            snw = scanner[1][1];
+            sn = scanner[1][2];
+            sne = scanner[1][3];
+            sw = scanner[2][1];
+            se = scanner[2][3];
+            ssw = scanner[3][1];
+            ss = scanner[3][2];
+            sse = scanner[3][3];
         }else{
-            nw = radar[4][4];
-            n = radar[4][5];
-            ne = radar[4][6];
-            w = radar[5][4];
-            e = radar[5][6];
-            sw = radar[6][4];
-            s = radar[6][5];
-            se = radar[6][6];
+            rnw = radar[4][4];
+            rn = radar[4][5];
+            rne = radar[4][6];
+            rw = radar[5][4];
+            re = radar[5][6];
+            rsw = radar[6][4];
+            rs = radar[6][5];
+            rse = radar[6][6];
+            
+            snw = scanner[4][4];
+            sn = scanner[4][5];
+            sne = scanner[4][6];
+            sw = scanner[5][4];
+            se = scanner[5][6];
+            ssw = scanner[6][4];
+            ss = scanner[6][5];
+            sse = scanner[6][6];
         }
         
-        if(nw != 1 && nw != 4){
+        if(rnw != 1 && rnw != 4){
             movimiento = "moveNW";                      
             menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x-1];
-            menor_distancia = scanner[1][1];
+            menor_distancia = snw;
         }
 
-        if(n != 1 && mapa[500/2 + gps_y-1][500/2 + gps_x] <= menor_paso && n != 2 && n != 4){
+        if(rn != 1 && mapa[500/2 + gps_y-1][500/2 + gps_x] <= menor_paso && rn != 2 && rn != 4){
             if(mapa[500/2 + gps_y-1][500/2 + gps_x] == menor_paso){
-                if(scanner[1][2] < menor_distancia){
+                if(sn < menor_distancia){
                     movimiento = "moveN";
-                    menor_distancia = scanner[1][2];
+                    menor_distancia = sn;
                 }
             }
             else{
                 movimiento = "moveN";
                 menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x];
-                menor_distancia = scanner[1][2];
+                menor_distancia = sn;
             }  
 
         }             
 
-        if(ne != 1 && mapa[500/2 + gps_y-1][500/2 + gps_x+1] <= menor_paso && ne != 2 && ne != 4){
+        if(rne != 1 && mapa[500/2 + gps_y-1][500/2 + gps_x+1] <= menor_paso && rne != 2 && rne != 4){
             if(mapa[500/2 + gps_y-1][500/2 + gps_x+1] == menor_paso){
-                if(scanner[1][3] < menor_distancia){
+                if(sne < menor_distancia){
                     movimiento = "moveNE";
-                    menor_distancia = scanner[1][3];
+                    menor_distancia = sne;
                 }
             }
             else{
                 movimiento = "moveNE";
                 menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x+1];
-                menor_distancia = scanner[1][3];
+                menor_distancia = sne;
             }    
 
         }
 
-       if(w != 1 && mapa[500/2 + gps_y][500/2 + gps_x-1] <= menor_paso && w != 2 && w != 4){
+       if(rw != 1 && mapa[500/2 + gps_y][500/2 + gps_x-1] <= menor_paso && rw != 2 && rw != 4){
             if(mapa[500/2 + gps_y][500/2 + gps_x-1] == menor_paso){
-                if(scanner[2][1] < menor_distancia){
+                if(sw < menor_distancia){
                     movimiento = "moveW";
-                    menor_distancia = scanner[2][1];
+                    menor_distancia = sw;
                 }
             }
             else{
                 movimiento = "moveW";
                 menor_paso = mapa[500/2 + gps_y][500/2 + gps_x-1];
-                menor_distancia = scanner[2][1];
+                menor_distancia = sw;
             }  
 
         }
 
-        if(e != 1 && mapa[500/2 + gps_y][500/2 + gps_x+1] <= menor_paso && e != 2 && e != 4){
+        if(re != 1 && mapa[500/2 + gps_y][500/2 + gps_x+1] <= menor_paso && re != 2 && re != 4){
             if(mapa[500/2 + gps_y][500/2 + gps_x+1] == menor_paso){
-                if(scanner[2][3] < menor_distancia){
+                if(se < menor_distancia){
                     movimiento = "moveE";         
-                    menor_distancia = scanner[2][3];
+                    menor_distancia = se;
                 }
             }
             else{
                 movimiento = "moveE";
                 menor_paso = mapa[500/2 + gps_y][500/2 + gps_x+1];
-                menor_distancia = scanner[2][3];
+                menor_distancia = se;
             }   
 
         }
 
-        if(sw != 1 && mapa[500/2 + gps_y+1][500/2 + gps_x-1] <= menor_paso && sw != 2 && sw != 4){
+        if(rsw != 1 && mapa[500/2 + gps_y+1][500/2 + gps_x-1] <= menor_paso && rsw != 2 && rsw != 4){
             if(mapa[500/2 + gps_y+1][500/2 + gps_x-1] == menor_paso){
-                if(scanner[3][1] < menor_distancia){
+                if(ssw < menor_distancia){
                     movimiento = "moveSW";  
-                    menor_distancia = scanner[3][1];
+                    menor_distancia = ssw;
                 }
             }
             else{
                 movimiento = "moveSW";
                 menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x-1];
-                menor_distancia = scanner[3][1];
+                menor_distancia = ssw;
             }                    
         }
 
-       if(s != 1 && mapa[500/2 + gps_y+1][500/2 + gps_x] <= menor_paso && s != 2 && s != 4){
+       if(rs != 1 && mapa[500/2 + gps_y+1][500/2 + gps_x] <= menor_paso && rs != 2 && rs != 4){
             if(mapa[500/2 + gps_y+1][500/2 + gps_x] == menor_paso){
-                if(scanner[3][2] < menor_distancia){
+                if(ss < menor_distancia){
                     movimiento = "moveS";
-                    menor_distancia = scanner[3][2];
+                    menor_distancia = ss;
                 }
             }
             else{
                 movimiento = "moveS";
                 menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x];
-                menor_distancia = scanner[3][2];
+                menor_distancia = ss;
             }   
 
         }
 
-        if(se != 1 && mapa[500/2 + gps_y+1][500/2 + gps_x+1] <= menor_paso && se != 2 && se != 4){
+        if(rse != 1 && mapa[500/2 + gps_y+1][500/2 + gps_x+1] <= menor_paso && rse != 2 && rse != 4){
             if(mapa[500/2 + gps_y+1][500/2 + gps_x+1] == menor_paso){
-                if(scanner[3][3] < menor_distancia){
+                if(sse < menor_distancia){
                     movimiento = "moveSE";
-                    menor_distancia = scanner[3][3];
+                    menor_distancia = sse;
                 }
             }
             else{
                 movimiento = "moveSE";
                 menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x+1];
-                menor_distancia = scanner[3][3];
+                menor_distancia = sse;
             }   
 
         }
@@ -604,131 +623,69 @@ public class Vehiculo extends SingleAgent{
     */
     public String movimientoAereoConScanner(){
         String movimiento = "";
-        int menor_paso = 50000;
-        int menor_distancia = 50000;
+        int menor_distancia = 25001;
         
         
-        int n, s, e, w, ne, nw, se, sw;
+        int rn, rs, re, rw, rne, rnw, rse, rsw;
+        int sn, ss, se, sw, sne, snw, sse, ssw;
         
-        nw = radar[0][0];
-        n = radar[0][1];
-        ne = radar[0][2];
-        w = radar[1][0];
-        e = radar[1][2];
-        sw = radar[2][0];
-        s = radar[2][1];
-        se = radar[2][2];
+        rnw = radar[0][0];
+        rn = radar[0][1];
+        rne = radar[0][2];
+        rw = radar[1][0];
+        re = radar[1][2];
+        rsw = radar[2][0];
+        rs = radar[2][1];
+        rse = radar[2][2];
+        
+        snw = scanner[0][0];
+        sn = scanner[0][1];
+        sne = scanner[0][2];
+        sw = scanner[1][0];
+        se = scanner[1][2];
+        ssw = scanner[2][0];
+        ss = scanner[2][1];
+        sse = scanner[2][2]; 
         
         
-        if(nw != 2 && nw != 4){
+        if(rnw != 2 && rnw != 4){
             movimiento = "moveNW";                      
-            menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x-1];
-            menor_distancia = scanner[1][1]; 
+            menor_distancia = snw; 
         }
                               
-
-        if(mapa[500/2 + gps_y-1][500/2 + gps_x] <= menor_paso && n != 2 && n != 4){
-            if(mapa[500/2 + gps_y-1][500/2 + gps_x] == menor_paso){
-                if(scanner[1][2] < menor_distancia){
-                    movimiento = "moveN";
-                    menor_distancia = scanner[1][2];
-                }
-            }
-            else{
-                movimiento = "moveN";
-                menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x];
-                menor_distancia = scanner[1][2];
-            }  
-
+        if(sn < menor_distancia && rn != 2 && rn != 4){
+            movimiento = "moveN";
+            menor_distancia = sn;                             
         }             
 
-        if(mapa[500/2 + gps_y-1][500/2 + gps_x+1] <= menor_paso && ne != 2 && ne != 4){
-            if(mapa[500/2 + gps_y-1][500/2 + gps_x+1] == menor_paso){
-                if(scanner[1][3] < menor_distancia){
-                    movimiento = "moveNE";
-                    menor_distancia = scanner[1][3];
-                }
-            }
-            else{
-                movimiento = "moveNE";
-                menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x+1];
-                menor_distancia = scanner[1][3];
-            }    
-
+        if(sne < menor_distancia && rne != 2 && rne != 4){         
+            movimiento = "moveNE";
+            menor_distancia = sne;
         }
 
-       if(mapa[500/2 + gps_y][500/2 + gps_x-1] <= menor_paso && w != 2 && w != 4){
-            if(mapa[500/2 + gps_y][500/2 + gps_x-1] == menor_paso){
-                if(scanner[2][1] < menor_distancia){
-                    movimiento = "moveW";
-                    menor_distancia = scanner[2][1];
-                }
-            }
-            else{
-                movimiento = "moveW";
-                menor_paso = mapa[500/2 + gps_y][500/2 + gps_x-1];
-                menor_distancia = scanner[2][1];
-            }  
-
+       if(sw < menor_distancia && rw != 2 && rw != 4){
+            movimiento = "moveW";
+            menor_distancia = sw;
         }
 
-        if(mapa[500/2 + gps_y][500/2 + gps_x+1] <= menor_paso && e != 2 && e != 4){
-            if(mapa[500/2 + gps_y][500/2 + gps_x+1] == menor_paso){
-                if(scanner[2][3] < menor_distancia){
-                    movimiento = "moveE";         
-                    menor_distancia = scanner[2][3];
-                }
-            }
-            else{
-                movimiento = "moveE";
-                menor_paso = mapa[500/2 + gps_y][500/2 + gps_x+1];
-                menor_distancia = scanner[2][3];
-            }   
+        if(se < menor_distancia && re != 2 && re != 4){ 
+            movimiento = "moveE";
+            menor_distancia = se;
+           }
 
+        if(ssw < menor_distancia && rsw != 2 && rsw != 4){
+            movimiento = "moveSW";
+            menor_distancia = ssw;                             
         }
 
-        if(mapa[500/2 + gps_y+1][500/2 + gps_x-1] <= menor_paso && sw != 2 && sw != 4){
-            if(mapa[500/2 + gps_y+1][500/2 + gps_x-1] == menor_paso){
-                if(scanner[3][1] < menor_distancia){
-                    movimiento = "moveSW";  
-                    menor_distancia = scanner[3][1];
-                }
-            }
-            else{
-                movimiento = "moveSW";
-                menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x-1];
-                menor_distancia = scanner[3][1];
-            }                    
+       if(ss < menor_distancia && rs != 2 && rs != 4){
+            movimiento = "moveS";
+            menor_distancia = ss;
         }
 
-       if(mapa[500/2 + gps_y+1][500/2 + gps_x] <= menor_paso && s != 2 && s != 4){
-            if(mapa[500/2 + gps_y+1][500/2 + gps_x] == menor_paso){
-                if(scanner[3][2] < menor_distancia){
-                    movimiento = "moveS";
-                    menor_distancia = scanner[3][2];
-                }
-            }
-            else{
-                movimiento = "moveS";
-                menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x];
-                menor_distancia = scanner[3][2];
-            }   
-
-        }
-
-        if(mapa[500/2 + gps_y+1][500/2 + gps_x+1] <= menor_paso && se != 2 && se != 4){
-            if(mapa[500/2 + gps_y+1][500/2 + gps_x+1] == menor_paso){
-                if(scanner[3][3] < menor_distancia){
-                    movimiento = "moveSE";
-                    menor_distancia = scanner[3][3];
-                }
-            }
-            else{
-                movimiento = "moveSE";
-                menor_paso = mapa[500/2 + gps_y+1][500/2 + gps_x+1];
-                menor_distancia = scanner[3][3];
-            }   
-
+        if(sse < menor_distancia && rse != 2 && rse != 4){   
+            movimiento = "moveSE";
+            menor_distancia = sse;
         }      
        
         movimiento = comprobarObjetivoAlrededor(movimiento);
