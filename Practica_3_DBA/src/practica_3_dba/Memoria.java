@@ -19,6 +19,7 @@ public class Memoria {
     * @author joaquin
     */
   public void escribir(String x , String y) throws IOException{
+      System.out.println("Escribiendo txt en memoria");
     this.x=Integer.parseInt(x);
     this.y=Integer.parseInt(y);
     
@@ -27,6 +28,7 @@ public class Memoria {
     FileWriter escribir=new FileWriter(archivo,true);
 
     escribir.write(x);
+    escribir.append("\r\n");
     escribir.write(y);
 
     escribir.close();
@@ -36,6 +38,7 @@ public class Memoria {
    * @author joaquin
    */
   public boolean leer(){
+       System.out.println("entrando en leer");
     boolean existe=true;
     int a = 0;
     String texto="";
