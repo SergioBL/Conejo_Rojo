@@ -286,7 +286,7 @@ public class Vehiculo extends SingleAgent{
     public void execute(){
         try {
             jframe = new JFrame();
-            m = new MyDrawPanel(mapa);
+            m = new MyDrawPanel(mapa,true);
             jframe.add(m);
             jframe.setSize(mapa.length, mapa.length);
             jframe.setVisible(true);
@@ -1080,6 +1080,8 @@ public class Vehiculo extends SingleAgent{
                                 actualizarDatos();
                         }
                     }
+                    m.Update(mapa);
+                    m.repaint();
                 }
                 
                 if(goal){

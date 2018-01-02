@@ -43,8 +43,10 @@ public class Pizarra extends SingleAgent{
     private int EnergiaTotal;
     private int NvehiculosObjetivo;
     private MyDrawPanel m;
+    private MyDrawPanel scanner_draw;
     private JFrame jframe;
     private Memoria memoria;
+    private JFrame jframe_2;
     
     class DatosVehiculo{
         public Tipo tipoVehiculo; 
@@ -233,7 +235,10 @@ public class Pizarra extends SingleAgent{
                     scanner_compartido[i][j] = distancia_x;
                 else
                     scanner_compartido[i][j] = distancia_y;
+                
             }
+        scanner_draw.Update(scanner_compartido);
+        scanner_draw.repaint();
         System.out.println("Terminado sin problemas, cargando ....");
     }
     
@@ -349,11 +354,17 @@ public class Pizarra extends SingleAgent{
             
             conexion();
             jframe = new JFrame();
-            m = new MyDrawPanel(mapa_compartido);
+            m = new MyDrawPanel(mapa_compartido, true);
+            scanner_draw = new MyDrawPanel(scanner_compartido, false);
             jframe.add(m);
             jframe.setSize(mapa_compartido.length, mapa_compartido.length);
             jframe.setVisible(true);
             jframe.setTitle("Gugel");
+            jframe_2 = new JFrame();
+            jframe_2.add(scanner_draw);
+            jframe_2.setSize(scanner_compartido.length, scanner_compartido.length);
+            jframe_2.setVisible(true);
+            jframe_2.setTitle("SCANNER");
             while(!finalizar){
                 actuar();
                 m.Update(mapa_compartido);

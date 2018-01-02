@@ -11,6 +11,8 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 /**
  * @author joaquin
+ * Esto es una clase auxiliar donde almacenamos donde está el objetivo para en otras ejecuciones probar
+ * lo que es mandar a los vehiculos directamente al objetivo
  */
 public class Memoria {
     private int x;

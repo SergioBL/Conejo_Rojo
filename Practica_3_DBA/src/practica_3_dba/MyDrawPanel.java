@@ -12,17 +12,23 @@ import java.awt.image.BufferedImage;
 public class MyDrawPanel extends javax.swing.JPanel {
     
     BufferedImage image = new BufferedImage(510, 510, BufferedImage.TYPE_INT_RGB);
+    boolean radar;
 
     /**
     *
     * @author Alex
     */
-    public MyDrawPanel(int [][] mapWorld) {
+    public MyDrawPanel(int [][] mapWorld, boolean radar) {
         initComponents();
-		
+        
+        this.radar = radar;
 	for(int y = 0; y < mapWorld.length; ++y)
-            for(int x = 0; x < mapWorld.length; ++x)
-		paintCoord(mapWorld[y][x], x, y);
+            for(int x = 0; x < mapWorld.length; ++x){
+                if(radar)
+                    paintCoord(mapWorld[y][x], x, y);
+                else
+                    paintCoordScanner(mapWorld[y][x], x, y);
+            }
     }
     
     /**
@@ -32,7 +38,10 @@ public class MyDrawPanel extends javax.swing.JPanel {
     public void Update(int [][] mapWorld) {	
 	for(int y = 0; y < mapWorld.length; ++y)
             for(int x = 0; x < mapWorld.length; ++x)
-		paintCoord(mapWorld[y][x], x, y);
+                if(radar)
+                    paintCoord(mapWorld[y][x], x, y);
+                else
+                    paintCoordScanner(mapWorld[y][x], x, y);
         //repaint();
     }
     
@@ -60,6 +69,18 @@ public class MyDrawPanel extends javax.swing.JPanel {
                     image.setRGB(x, y, color.getRGB());
                     break;
             }
+    }
+    
+    /**
+     * 
+     * @author Alex
+     */
+    private void paintCoordScanner(int mapWorld, int x, int y) {
+            Color color;
+            if(mapWorld > 255)
+                mapWorld = 255;
+            color = new Color(mapWorld,mapWorld,mapWorld);
+            image.setRGB(x, y, color.getRGB());
     }
     
 	/**
