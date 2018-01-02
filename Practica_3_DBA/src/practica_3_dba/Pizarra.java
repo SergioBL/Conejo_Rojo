@@ -80,7 +80,7 @@ public class Pizarra extends SingleAgent{
     */
     public void conexion() throws JSONException, InterruptedException{
         envio = new JSONObject();
-        envio.put("world","map7");
+        envio.put("world","map3");
         enviar_mensaje(envio.toString(), "Achernar", ACLMessage.SUBSCRIBE);
         recibir_mensaje();
         if(recepcion.has("trace")){

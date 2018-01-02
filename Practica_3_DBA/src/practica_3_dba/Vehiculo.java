@@ -1001,7 +1001,7 @@ public class Vehiculo extends SingleAgent{
                     inicializarMapa();
                 }
                 
-                while(!goal){ 
+                while(!goal || finalizar){ 
                     if(bateria <= fuelrate){
                         envio = new JSONObject();
                         envio.put("command","refuel");
@@ -1012,6 +1012,7 @@ public class Vehiculo extends SingleAgent{
                         if(inbox.getPerformativeInt()==ACLMessage.REFUSE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
                             if(recepcion.getString("details").equals("BAD ENERGY")){
                                 System.out.println("No hay mas recargas disponibles,Energia Agotada");
+                                finalizar = true;
                             }
                             finalizar = true;
                             envio = new JSONObject();
