@@ -16,7 +16,7 @@ public class Memoria {
     private int x;
     private int y;
     /**
-    * @author joaquin
+    * @author Joaquin
     */
   public void escribir(String x , String y) throws IOException{
       System.out.println("Escribiendo txt en memoria");
@@ -35,7 +35,7 @@ public class Memoria {
   }
    
    /**
-   * @author joaquin
+   * @author Joaquin
    */
   public boolean leer(){
        System.out.println("entrando en leer");

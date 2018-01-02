@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 
@@ -50,6 +51,8 @@ public class Vehiculo extends SingleAgent{
     private boolean visto;
     private int objetivo_x;
     private int objetivo_y;
+     private MyDrawPanel m;
+    private JFrame jframe;
     
     /**
     *
@@ -282,11 +285,19 @@ public class Vehiculo extends SingleAgent{
     @Override
     public void execute(){
         try {
+            jframe = new JFrame();
+            m = new MyDrawPanel(mapa);
+            jframe.add(m);
+            jframe.setSize(mapa.length, mapa.length);
+            jframe.setVisible(true);
+            jframe.setTitle("Gugel2");
             if(conexion()) 
                 while(!finalizar){
                     try {
                         recibir_mensaje();
                         actuar();
+                        m.Update(mapa);
+                        m.repaint();
                     } catch (InterruptedException | JSONException ex) {
                     Logger.getLogger(Vehiculo.class.getName()).log(Level.SEVERE, null, ex);
                     }

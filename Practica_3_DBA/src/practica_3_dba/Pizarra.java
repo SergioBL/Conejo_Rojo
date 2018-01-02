@@ -83,7 +83,7 @@ public class Pizarra extends SingleAgent{
     */
     public void conexion() throws JSONException, InterruptedException{
         envio = new JSONObject();
-        envio.put("world","map1");
+        envio.put("world","map3");
         enviar_mensaje(envio.toString(), "Achernar", ACLMessage.SUBSCRIBE);
         recibir_mensaje();
         if(recepcion.has("trace")){
@@ -205,7 +205,7 @@ public class Pizarra extends SingleAgent{
     }
     
     /**
-     *  @author Alex
+     *  @author Alex Joaquin
      */
     public void rellenarMatrizScanner(int x, int y) throws IOException{
         int pos_x = x;
@@ -234,7 +234,7 @@ public class Pizarra extends SingleAgent{
                 else
                     scanner_compartido[i][j] = distancia_y;
             }
-        System.out.println("Terminado sin problemas");
+        System.out.println("Terminado sin problemas, cargando ....");
     }
     
     
@@ -249,7 +249,7 @@ public class Pizarra extends SingleAgent{
         for(int i = 0; i < 500; i++)
             for(int j = 0; j < 500; j++)
                 scanner.put(scanner_compartido[i][j]);
-        System.out.println("Sale sin problemas");
+        System.out.println("Sale sin problemas, comprimiendo ...");
         CompresorArray c = new CompresorArray(scanner);
         System.out.println("Sale sin problemas 1");
         String arrayComprimido = c.getStringComprimido();
