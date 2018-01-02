@@ -8,6 +8,7 @@ package practica_3_dba;
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
 import es.upv.dsic.gti_ia.core.SingleAgent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +44,7 @@ public class Pizarra extends SingleAgent{
     private int NvehiculosObjetivo;
     private MyDrawPanel m;
     private JFrame jframe;
+    private Memoria memoria;
     
     class DatosVehiculo{
         public Tipo tipoVehiculo; 
@@ -204,9 +206,17 @@ public class Pizarra extends SingleAgent{
     /**
      *  @author Alex
      */
-    public void rellenarMatrizScanner(int x, int y){
+    public void rellenarMatrizScanner(int x, int y) throws IOException{
         int pos_x = x;
         int pos_y = y;
+        
+        if(!memoria.leer()){
+             memoria.escribir(Integer.toString(x),Integer.toString(y));
+        }else{
+              memoria.leer(); 
+              pos_x= memoria.getX();
+              pos_y = memoria.getY();
+        }
         scanner_compartido[pos_y][pos_x] = 0;
         for(int i = 0; i < 500; i++)
             for(int j = 0; j < 500; j++){
@@ -277,7 +287,7 @@ public class Pizarra extends SingleAgent{
     *
     * @author Joaquin Alex
     */
-    public void buscarObjetivo()throws JSONException, InterruptedException{
+    public void buscarObjetivo()throws JSONException, InterruptedException, IOException{
         for (Map.Entry<String, DatosVehiculo> entry : vehiculos.entrySet()) {
             DatosVehiculo vehiculo = entry.getValue();
             //Solo buscan los coches
@@ -331,7 +341,9 @@ public class Pizarra extends SingleAgent{
     */
     @Override
     public void execute(){
+        
         try {
+            
             conexion();
             jframe = new JFrame();
             m = new MyDrawPanel(mapa_compartido);
@@ -345,6 +357,8 @@ public class Pizarra extends SingleAgent{
                 m.repaint();
             }
         } catch (JSONException | InterruptedException ex) {
+            Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -375,9 +389,14 @@ public class Pizarra extends SingleAgent{
     *
     * @author Joaquin Alex Alvaro
     */
-    public void actuar() throws JSONException, InterruptedException{
+    public void actuar() throws JSONException, InterruptedException, IOException{
           
         ////////////////////////Busqueda////////////////////////
+        if(memoria.leer()){
+            this.rellenarMatrizScanner(0,0);
+            objetivoEncontrado=true;
+        }
+        
         if(!objetivoEncontrado){
             buscarObjetivo();
         }
