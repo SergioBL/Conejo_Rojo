@@ -7,28 +7,53 @@ package practica_3_dba;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.FileReader;
+import java.io.BufferedReader;
 /**
- *
- * @author joaqu
+ * @author joaquin
  */
 public class Memoria {
-    /*Clase que permite escribir en un archivo de texto*/
+    
+    /**
+    * @author joaquin
+    */
+  public void escribir(String x , String y) throws IOException{
 
-//Importamos clases que se usaran
-public void escribir(String x , String y) throws IOException{
+    File archivo=new File("texto.txt");
 
-//Un texto cualquiera guardado en una variabl
-//Crear un objeto File se encarga de crear o abrir acceso a un archivo que se especifica en su constructor
-File archivo=new File("texto.txt");
-//Crear objeto FileWriter que sera el que nos ayude a escribir sobre archivo
-FileWriter escribir=new FileWriter(archivo,true);
-//Escribimos en el archivo con el metodo write 
-escribir.write(x);
-escribir.write(y);
-//Cerramos la conexion
-escribir.close();
+    FileWriter escribir=new FileWriter(archivo,true);
+
+    escribir.write(x);
+    escribir.write(y);
+
+    escribir.close();
+  }
+   
+   /**
+   * @author joaquin
+   */
+  public void leer(){
+    
+    String texto="";
+    try
+    {
+    FileReader lector=new FileReader("texto.txt");
+
+    BufferedReader contenido=new BufferedReader(lector);
+
+    while((texto=contenido.readLine())!=null)
+    {
+    System.out.println(texto);
+    }
+    }
+    catch(Exception e)
+    {
+     System.out.println("Error al leer");
+    }
+  }
+
 }
 
-}
+
 
 
