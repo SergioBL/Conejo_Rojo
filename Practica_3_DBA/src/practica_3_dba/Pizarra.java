@@ -212,10 +212,12 @@ public class Pizarra extends SingleAgent{
         
         if(!memoria.leer()){
              memoria.escribir(Integer.toString(x),Integer.toString(y));
+              System.out.println("Escribiendo objetivo en TXT");
         }else{
               memoria.leer(); 
               pos_x= memoria.getX();
               pos_y = memoria.getY();
+              System.out.println("Objetivo cargado de memoria x = "+pos_x + " e y = "+ pos_y);
         }
         scanner_compartido[pos_y][pos_x] = 0;
         for(int i = 0; i < 500; i++)
@@ -393,8 +395,9 @@ public class Pizarra extends SingleAgent{
           
         ////////////////////////Busqueda////////////////////////
         if(memoria.leer()){
-            this.rellenarMatrizScanner(0,0);
             objetivoEncontrado=true;
+            System.out.println("OBJETIVO ENCONTRADO ANTERIORMENTE");
+            this.rellenarMatrizScanner(0,0);
         }
         
         if(!objetivoEncontrado){
