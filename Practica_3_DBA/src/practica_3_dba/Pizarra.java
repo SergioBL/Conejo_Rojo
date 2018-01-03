@@ -261,16 +261,12 @@ public class Pizarra extends SingleAgent{
         for(int i = 0; i < 500; i++)
             for(int j = 0; j < 500; j++)
                 scanner.put(scanner_compartido[i][j]);
-        System.out.println("Sale sin problemas, comprimiendo ...");
-        CompresorArray c = new CompresorArray(scanner);
-        System.out.println("Sale sin problemas 1");
-        String arrayComprimido = c.getStringComprimido();
-        System.out.println("Sale sin problemas 2");
-        envio.put("Scanner", arrayComprimido);
+        System.out.println("Sale sin problemas, enviando scanner ...");
+        envio.put("Scanner", scanner);
         //Enviamos el siguiente movimiento
-        System.out.println("Sale sin problemas 3");
+        System.out.println("Sale sin problemas 2");
         enviar_mensaje(envio.toString(),nombreAgent,ACLMessage.REQUEST);
-        System.out.println("Sale sin problemas 4");
+        System.out.println("Sale sin problemas 3");
         recibir_mensaje();           
     }
     /**
