@@ -907,35 +907,35 @@ public class Vehiculo extends SingleAgent{
         }
         
         
-        if(no == 3){
+        if(no == 3 && no != 4){
             movimiento = "moveNW";
         }    
 
-        if(n == 3){
+        if(n == 3 && n != 4){
             movimiento = "moveN";
         }
 
-        if(ne == 3){
+        if(ne == 3 && ne != 4){
             movimiento = "moveNE";
         }
 
-        if(o == 3){
+        if(o == 3 && o != 4){
             movimiento = "moveW";
         }
 
-        if(e == 3){
+        if(e == 3 && e != 4){
             movimiento = "moveE";
         }
 
-        if(so == 3){
+        if(so == 3 && so != 4){
             movimiento = "moveSW";
         }
 
-        if(s == 3){
+        if(s == 3 && s != 4){
             movimiento = "moveS";
         }
 
-        if(se == 3){
+        if(se == 3 && se != 4){
             movimiento = "moveSE";
         }
         
