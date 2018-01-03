@@ -357,10 +357,15 @@ public class Pizarra extends SingleAgent{
     public void execute(){
         
         try {
-            
             conexion();
+            jframe = new JFrame();
+            m = new MyDrawPanel(mapa_compartido, true);
+            jframe.add(m);
+            jframe.setSize(mapa_compartido.length, mapa_compartido.length);
+            jframe.setVisible(true);
+            jframe.setTitle("Gugel");
             while(!finalizar){
-                actuar();                
+                actuar();
             }
         } catch (JSONException | InterruptedException ex) {
             Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
@@ -405,14 +410,7 @@ public class Pizarra extends SingleAgent{
         }
         
         if(!objetivoEncontrado){
-            jframe = new JFrame();
-            m = new MyDrawPanel(mapa_compartido, true);
-            jframe.add(m);
-            jframe.setSize(mapa_compartido.length, mapa_compartido.length);
-            jframe.setVisible(true);
-            jframe.setTitle("Gugel");
             buscarObjetivo();
-            
         }
         
         if(objetivoEncontrado){
@@ -437,6 +435,7 @@ public class Pizarra extends SingleAgent{
                  envio.put("","");
                  enviar_mensaje(envio.toString(),"achernar",ACLMessage.CANCEL);
                  finalizar=true;
+                 jframe_2.dispose();
             }
 
         }
@@ -448,8 +447,6 @@ public class Pizarra extends SingleAgent{
             System.out.println("Programa Terminado la traza es =  " + recepcion.getJSONArray("trace"));
         }
         ///////////////////////Fin-fin///////////////////
-        
-        jframe_2.dispose();
     }
     
 }
