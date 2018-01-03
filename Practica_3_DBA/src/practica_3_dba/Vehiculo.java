@@ -617,7 +617,9 @@ public class Vehiculo extends SingleAgent{
     public String movimientoAereoConScanner(){
         String movimiento = "";
         int menor_distancia = 25001;
+        ArrayList<String> movimientos = new ArrayList();
         
+        Random random = new Random();
         
         int rn, rs, re, rw, rne, rnw, rse, rsw;
         int sn, ss, se, sw, sne, snw, sse, ssw;
@@ -642,45 +644,79 @@ public class Vehiculo extends SingleAgent{
         
         
         if(rnw != 2 && rnw != 4){
-            movimiento = "moveNW";                      
+            movimiento = "moveNW";  
+            movimientos.add(movimiento);
             menor_distancia = snw; 
         }
                               
-        if(sn < menor_distancia && rn != 2 && rn != 4){
+        if(sn <= menor_distancia && rn != 2 && rn != 4){
             movimiento = "moveN";
-            menor_distancia = sn;                             
+            if(sn < menor_distancia){
+                menor_distancia = sn;
+                movimientos.clear();
+            }         
+            movimientos.add(movimiento);
+                                         
         }             
 
-        if(sne < menor_distancia && rne != 2 && rne != 4){         
+        if(sne <= menor_distancia && rne != 2 && rne != 4){         
             movimiento = "moveNE";
-            menor_distancia = sne;
+            if(sne < menor_distancia){
+                menor_distancia = sne;
+                movimientos.clear();
+            }
+            movimientos.add(movimiento);
         }
 
-       if(sw < menor_distancia && rw != 2 && rw != 4){
+       if(sw <= menor_distancia && rw != 2 && rw != 4){
             movimiento = "moveW";
-            menor_distancia = sw;
+            if(sw < menor_distancia){
+                menor_distancia = sw;
+                movimientos.clear();
+            }
+            
+            movimientos.add(movimiento);
         }
 
-        if(se < menor_distancia && re != 2 && re != 4){ 
+        if(se <= menor_distancia && re != 2 && re != 4){ 
             movimiento = "moveE";
-            menor_distancia = se;
+            if(se < menor_distancia){
+                menor_distancia = se;
+                movimientos.clear();
+            }
+            
+            movimientos.add(movimiento);
            }
 
-        if(ssw < menor_distancia && rsw != 2 && rsw != 4){
+        if(ssw <= menor_distancia && rsw != 2 && rsw != 4){
             movimiento = "moveSW";
-            menor_distancia = ssw;                             
+            if(ssw < menor_distancia){
+                menor_distancia = ssw;    
+                movimientos.clear();    
+            }
+            movimientos.add(movimiento);
         }
 
-       if(ss < menor_distancia && rs != 2 && rs != 4){
+       if(ss <= menor_distancia && rs != 2 && rs != 4){
             movimiento = "moveS";
-            menor_distancia = ss;
+            if(ss < menor_distancia){
+                menor_distancia = ss;
+                movimientos.clear();
+            }
+            movimientos.add(movimiento);
         }
 
-        if(sse < menor_distancia && rse != 2 && rse != 4){   
+        if(sse <= menor_distancia && rse != 2 && rse != 4){   
             movimiento = "moveSE";
-            menor_distancia = sse;
+            if(sse < menor_distancia){
+                menor_distancia = sse;
+                movimientos.clear();
+            }
+            movimientos.add(movimiento);
         }      
        
+        
+        movimiento = movimientos.get(random.nextInt(movimientos.size()));
         movimiento = comprobarObjetivoAlrededor(movimiento);
        
         return movimiento;
@@ -988,6 +1024,7 @@ public class Vehiculo extends SingleAgent{
             }//Alvaro
             else if(recepcion.getString("Accion").equals("LlegaObjetivo")){
                 if(scanner == null){
+                    paso = 0;
                     obtieneScanner();
                     inicializarMapa();
                     jframe = new JFrame();
