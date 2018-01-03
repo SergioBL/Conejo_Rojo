@@ -228,16 +228,12 @@ public class Vehiculo extends SingleAgent{
     public void obtieneScanner() throws JSONException{
         scanner = new int[500][500];
         System.out.println("Vehiculo  -  ObtieneScanner");
-        String sc = recepcion.getString("Scanner");
-        System.out.println("Vehiculo  -  ObtieneScanner1");
-        CompresorArray c = new CompresorArray(sc);
+        JSONArray scan = recepcion.getJSONArray("Scanner");
         System.out.println("Vehiculo  -  ObtieneScanner2");
-        JSONArray scan = c.getArraySinComprimir();
-        System.out.println("Vehiculo  -  ObtieneScanner3");
         for(int i = 0; i < scan.length(); i+=500)
             for(int j = 0; j < 500; j++)
                 scanner[i/500][j] = scan.getInt(i+j);
-        System.out.println("Vehiculo  -  ObtieneScanner4");
+        System.out.println("Vehiculo  -  ObtieneScanner3");
     }
     
     /**
@@ -335,15 +331,6 @@ public class Vehiculo extends SingleAgent{
             rsw = radar[3][1];
             rs = radar[3][2];
             rse = radar[3][3];
-            
-            snw = scanner[1][1];
-            sn = scanner[1][2];
-            sne = scanner[1][3];
-            sw = scanner[2][1];
-            se = scanner[2][3];
-            ssw = scanner[3][1];
-            ss = scanner[3][2];
-            sse = scanner[3][3];
         }else{
             rnw = radar[4][4];
             rn = radar[4][5];
@@ -353,16 +340,17 @@ public class Vehiculo extends SingleAgent{
             rsw = radar[6][4];
             rs = radar[6][5];
             rse = radar[6][6];
-            
-            snw = scanner[4][4];
-            sn = scanner[4][5];
-            sne = scanner[4][6];
-            sw = scanner[5][4];
-            se = scanner[5][6];
-            ssw = scanner[6][4];
-            ss = scanner[6][5];
-            sse = scanner[6][6];
         }
+        
+        snw = scanner[gps_y-1][gps_x-1];
+        sn = scanner[gps_y-1][gps_x];
+        sne = scanner[gps_y-1][gps_x+1];
+        sw = scanner[gps_y][gps_x-1];
+        se = scanner[gps_y][gps_x+1];
+        ssw = scanner[gps_y+1][gps_x-1];
+        ss = scanner[gps_y+1][gps_x];
+        sse = scanner[gps_y+1][gps_x+1];
+        
         
         if(rnw != 1 && rnw != 4){
             movimiento = "moveNW";                      
@@ -643,14 +631,14 @@ public class Vehiculo extends SingleAgent{
         rs = radar[2][1];
         rse = radar[2][2];
         
-        snw = scanner[0][0];
-        sn = scanner[0][1];
-        sne = scanner[0][2];
-        sw = scanner[1][0];
-        se = scanner[1][2];
-        ssw = scanner[2][0];
-        ss = scanner[2][1];
-        sse = scanner[2][2]; 
+        snw = scanner[gps_y-1][gps_x-1];
+        sn = scanner[gps_y-1][gps_x];
+        sne = scanner[gps_y-1][gps_x+1];
+        sw = scanner[gps_y][gps_x-1];
+        se = scanner[gps_y][gps_x+1];
+        ssw = scanner[gps_y+1][gps_x-1];
+        ss = scanner[gps_y+1][gps_x];
+        sse = scanner[gps_y+1][gps_x+1];
         
         
         if(rnw != 2 && rnw != 4){
