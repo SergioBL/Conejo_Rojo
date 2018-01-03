@@ -213,6 +213,13 @@ public class Pizarra extends SingleAgent{
         int pos_x = x;
         int pos_y = y;
         
+        jframe_2 = new JFrame();
+        scanner_draw = new MyDrawPanel(scanner_compartido, false);
+        jframe_2.add(scanner_draw);
+        jframe_2.setSize(scanner_compartido.length, scanner_compartido.length);
+        jframe_2.setVisible(true);
+        jframe_2.setTitle("SCANNER");
+        
         if(!memoria.leer()){
              memoria.escribir(Integer.toString(x),Integer.toString(y));
               System.out.println("Escribiendo objetivo en TXT");
@@ -326,7 +333,10 @@ public class Pizarra extends SingleAgent{
                         //Enviamos primero al mas cercano
                         rellenarMatrizScanner(recepcion.getInt("o_x"),recepcion.getInt("o_y"));
                         moverAgenteObjetivo(inbox.getSender().toString());
+                        jframe.dispose();
                     }
+                    m.Update(mapa_compartido);
+                    m.repaint();
                 }else{
                     System.out.println("No se mueve bien el coche");
                 }
@@ -353,22 +363,8 @@ public class Pizarra extends SingleAgent{
         try {
             
             conexion();
-            jframe = new JFrame();
-            m = new MyDrawPanel(mapa_compartido, true);
-            scanner_draw = new MyDrawPanel(scanner_compartido, false);
-            jframe.add(m);
-            jframe.setSize(mapa_compartido.length, mapa_compartido.length);
-            jframe.setVisible(true);
-            jframe.setTitle("Gugel");
-            jframe_2 = new JFrame();
-            jframe_2.add(scanner_draw);
-            jframe_2.setSize(scanner_compartido.length, scanner_compartido.length);
-            jframe_2.setVisible(true);
-            jframe_2.setTitle("SCANNER");
             while(!finalizar){
-                actuar();
-                m.Update(mapa_compartido);
-                m.repaint();
+                actuar();                
             }
         } catch (JSONException | InterruptedException ex) {
             Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
@@ -413,7 +409,14 @@ public class Pizarra extends SingleAgent{
         }
         
         if(!objetivoEncontrado){
+            jframe = new JFrame();
+            m = new MyDrawPanel(mapa_compartido, true);
+            jframe.add(m);
+            jframe.setSize(mapa_compartido.length, mapa_compartido.length);
+            jframe.setVisible(true);
+            jframe.setTitle("Gugel");
             buscarObjetivo();
+            
         }
         
         if(objetivoEncontrado){
@@ -450,6 +453,7 @@ public class Pizarra extends SingleAgent{
         }
         ///////////////////////Fin-fin///////////////////
         
+        jframe_2.dispose();
     }
     
 }

@@ -51,7 +51,7 @@ public class Vehiculo extends SingleAgent{
     private boolean visto;
     private int objetivo_x;
     private int objetivo_y;
-     private MyDrawPanel m;
+    private MyDrawPanel m;
     private JFrame jframe;
     
     /**
@@ -285,19 +285,11 @@ public class Vehiculo extends SingleAgent{
     @Override
     public void execute(){
         try {
-            jframe = new JFrame();
-            m = new MyDrawPanel(mapa,true);
-            jframe.add(m);
-            jframe.setSize(mapa.length, mapa.length);
-            jframe.setVisible(true);
-            jframe.setTitle("Gugel2");
             if(conexion()) 
                 while(!finalizar){
                     try {
                         recibir_mensaje();
                         actuar();
-                        m.Update(mapa);
-                        m.repaint();
                     } catch (InterruptedException | JSONException ex) {
                     Logger.getLogger(Vehiculo.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -1010,6 +1002,12 @@ public class Vehiculo extends SingleAgent{
                 if(scanner == null){
                     obtieneScanner();
                     inicializarMapa();
+                    jframe = new JFrame();
+                    m = new MyDrawPanel(mapa,true);
+                    jframe.add(m);
+                    jframe.setSize(mapa.length, mapa.length);
+                    jframe.setVisible(true);
+                    jframe.setTitle("Gugel2");
                 }
                 
                 while(!goal || finalizar){ 
@@ -1088,6 +1086,7 @@ public class Vehiculo extends SingleAgent{
                     finalizar = true;
                     envio = new JSONObject();
                     envio.put("EnObjetivo", true);
+                    jframe.dispose();
                     enviar_mensaje(envio.toString(),"pizarra2", ACLMessage.INFORM);                  
                 }               
             }   
