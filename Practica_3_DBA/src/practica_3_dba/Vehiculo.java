@@ -78,7 +78,7 @@ public class Vehiculo extends SingleAgent{
     * @author Alex  Joaquin
     */
     public boolean conexion() throws InterruptedException, JSONException{
-        //Recibimos el request de pizarra2
+        //Recibimos el request de pizarra
         recibir_mensaje();
         //Construimos el mensaje
         envio = new JSONObject();
@@ -91,9 +91,9 @@ public class Vehiculo extends SingleAgent{
         if(inbox.getPerformativeInt()==ACLMessage.REFUSE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){ 
             envio = new JSONObject();
             envio.put("details : "+this.nombre,recepcion.getString("details"));
-             enviar_mensaje(envio.toString(), "pizarra2", ACLMessage.REFUSE);
+             enviar_mensaje(envio.toString(), "pizarra", ACLMessage.REFUSE);
             return false;
-        }//En caso contrario, la conexión tiene exito y enviamos a pizarra2 quien somos y que somos
+        }//En caso contrario, la conexión tiene exito y enviamos a pizarra quien somos y que somos
         else{
             JSONObject datos = recepcion.getJSONObject("capabilities"); 
             fuelrate = datos.getInt("fuelrate");
@@ -113,7 +113,7 @@ public class Vehiculo extends SingleAgent{
             enviar_mensaje("","Achernar",ACLMessage.QUERY_REF);
             recibir_mensaje();
             if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
-                enviar_mensaje(" ", "pizarra2", ACLMessage.REFUSE);
+                enviar_mensaje(" ", "pizarra", ACLMessage.REFUSE);
                 return false;
             }else
                 actualizarDatos();
@@ -123,8 +123,8 @@ public class Vehiculo extends SingleAgent{
             envio.put("ID",nombreVehiculo);
             envio.put("x", gps_x);
             envio.put("y", gps_y);
-            //Avisamos a pizarra2
-            enviar_mensaje(envio.toString(), "pizarra2", ACLMessage.INFORM);
+            //Avisamos a pizarra
+            enviar_mensaje(envio.toString(), "pizarra", ACLMessage.INFORM);
             return true;
         }
             
@@ -983,16 +983,16 @@ public class Vehiculo extends SingleAgent{
                         finalizar =true;
                         envio = new JSONObject();
                         envio.put("details : "+this.nombre,recepcion.getString("details"));
-                        enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
+                        enviar_mensaje(envio.toString(),"pizarra",ACLMessage.REFUSE);
                 }
                 else{
-                    //actualizamos los datos ya que nos hemos movido y se lo enviamos a pizarra2
+                    //actualizamos los datos ya que nos hemos movido y se lo enviamos a pizarra
                     envio = new JSONObject();
 
                     enviar_mensaje("","Achernar",ACLMessage.QUERY_REF);
                     recibir_mensaje();
                     if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
-                        enviar_mensaje(recepcion.toString(),"pizarra2",ACLMessage.REFUSE);
+                        enviar_mensaje(recepcion.toString(),"pizarra",ACLMessage.REFUSE);
                     }else
                         actualizarDatos();
 
@@ -1019,7 +1019,7 @@ public class Vehiculo extends SingleAgent{
                     envio.put("energy", energy);
                     envio.put("Bateria", bateria);
                     
-                    enviar_mensaje(envio.toString(), "pizarra2", ACLMessage.INFORM);  
+                    enviar_mensaje(envio.toString(), "pizarra", ACLMessage.INFORM);  
                 }
             }//Alvaro
             else if(recepcion.getString("Accion").equals("LlegaObjetivo")){
@@ -1051,7 +1051,7 @@ public class Vehiculo extends SingleAgent{
                             finalizar = true;
                             envio = new JSONObject();
                             envio.put("details : "+this.nombre,recepcion.getString("details"));
-                            enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
+                            enviar_mensaje(envio.toString(),"pizarra",ACLMessage.REFUSE);
                             
                         }
                         else{
@@ -1063,7 +1063,7 @@ public class Vehiculo extends SingleAgent{
                             if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
                                 envio = new JSONObject();
                                 envio.put("details : "+this.nombre,recepcion.getString("details"));
-                                enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
+                                enviar_mensaje(envio.toString(),"pizarra",ACLMessage.REFUSE);
                             }
                             else{                               
                                 actualizarDatos();
@@ -1089,7 +1089,7 @@ public class Vehiculo extends SingleAgent{
                             finalizar =true;
                             envio = new JSONObject();
                             envio.put("details : "+this.nombre,recepcion.getString("details"));
-                            enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
+                            enviar_mensaje(envio.toString(),"pizarra",ACLMessage.REFUSE);
                         }else{   
                             envio = new JSONObject();
 
@@ -1098,7 +1098,7 @@ public class Vehiculo extends SingleAgent{
                             if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
                                 envio = new JSONObject();
                                 envio.put("details : "+this.nombre,recepcion.getString("details"));
-                                enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
+                                enviar_mensaje(envio.toString(),"pizarra",ACLMessage.REFUSE);
                             }else
                                 actualizarDatos();
                         }
@@ -1112,7 +1112,7 @@ public class Vehiculo extends SingleAgent{
                     envio = new JSONObject();
                     envio.put("EnObjetivo", true);
                     jframe.dispose();
-                    enviar_mensaje(envio.toString(),"pizarra2", ACLMessage.INFORM);                  
+                    enviar_mensaje(envio.toString(),"pizarra", ACLMessage.INFORM);                  
                 }               
             }   
         }
