@@ -342,17 +342,17 @@ public class Vehiculo extends SingleAgent{
             rse = radar[6][6];
         }
         
-        snw = scanner[gps_y-1][gps_x-1];
-        sn = scanner[gps_y-1][gps_x];
-        sne = scanner[gps_y-1][gps_x+1];
-        sw = scanner[gps_y][gps_x-1];
-        se = scanner[gps_y][gps_x+1];
-        ssw = scanner[gps_y+1][gps_x-1];
-        ss = scanner[gps_y+1][gps_x];
-        sse = scanner[gps_y+1][gps_x+1];
+        snw = scanner[500/2 + gps_y-1][500/2 + gps_x-1];
+        sn = scanner[500/2 + gps_y-1][500/2 + gps_x];
+        sne = scanner[500/2 + gps_y-1][500/2 + gps_x+1];
+        sw = scanner[500/2 + gps_y][500/2 + gps_x-1];
+        se = scanner[500/2 + gps_y][500/2 + gps_x+1];
+        ssw = scanner[500/2 + gps_y+1][500/2 + gps_x-1];
+        ss = scanner[500/2 + gps_y+1][500/2 + gps_x];
+        sse = scanner[500/2 + gps_y+1][500/2 + gps_x+1];
         
         
-        if(rnw != 1 && rnw != 4){
+        if(rnw != 1 && rnw != 4 && rnw != 2){
             movimiento = "moveNW";                      
             menor_paso = mapa[500/2 + gps_y-1][500/2 + gps_x-1];
             menor_distancia = snw;
@@ -631,14 +631,14 @@ public class Vehiculo extends SingleAgent{
         rs = radar[2][1];
         rse = radar[2][2];
         
-        snw = scanner[gps_y-1][gps_x-1];
-        sn = scanner[gps_y-1][gps_x];
-        sne = scanner[gps_y-1][gps_x+1];
-        sw = scanner[gps_y][gps_x-1];
-        se = scanner[gps_y][gps_x+1];
-        ssw = scanner[gps_y+1][gps_x-1];
-        ss = scanner[gps_y+1][gps_x];
-        sse = scanner[gps_y+1][gps_x+1];
+        snw = scanner[500/2 + gps_y-1][500/2 + gps_x-1];
+        sn = scanner[500/2 + gps_y-1][500/2 + gps_x];
+        sne = scanner[500/2 + gps_y-1][500/2 + gps_x+1];
+        sw = scanner[500/2 + gps_y][500/2 + gps_x-1];
+        se = scanner[500/2 + gps_y][500/2 + gps_x+1];
+        ssw = scanner[500/2 + gps_y+1][500/2 + gps_x-1];
+        ss = scanner[500/2 + gps_y+1][500/2 + gps_x];
+        sse = scanner[500/2 + gps_y+1][500/2 + gps_x+1];
         
         
         if(rnw != 2 && rnw != 4){
