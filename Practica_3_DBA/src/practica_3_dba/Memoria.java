@@ -17,15 +17,23 @@ import java.io.BufferedReader;
 public class Memoria {
     private int x;
     private int y;
+    private String mapa;
+    
+    
+    Memoria(String mapa){
+        this.mapa=mapa;
+    }
+    
+    
     /**
     * @author Joaquin
     */
-  public void escribir(String x , String y) throws IOException{
-      System.out.println("Escribiendo txt en memoria");
-    this.x=Integer.parseInt(x);
-    this.y=Integer.parseInt(y);
+    public void escribir(String x , String y) throws IOException{
+        System.out.println("Escribiendo txt en memoria");
+        this.x=Integer.parseInt(x);
+        this.y=Integer.parseInt(y);
     
-    File archivo=new File("texto.txt");
+        File archivo=new File(mapa+".txt");
 
     FileWriter escribir=new FileWriter(archivo,true);
 
@@ -40,13 +48,13 @@ public class Memoria {
    * @author Joaquin
    */
   public boolean leer(){
-       System.out.println("entrando en leer");
+    System.out.println("entrando en leer");
     boolean existe=true;
     int a = 0;
     String texto="";
     try
     {
-    FileReader lector=new FileReader("texto.txt");
+    FileReader lector=new FileReader(mapa+".txt");
 
     BufferedReader contenido=new BufferedReader(lector);
  
