@@ -53,8 +53,7 @@ public class Vehiculo extends SingleAgent{
     private int objetivo_y;
     private MyDrawPanel m;
     private JFrame jframe;
-    private int objetivo_x_libre;
-    private int objetivo_y_libre;
+   
     
     /**
     *
@@ -162,30 +161,11 @@ public class Vehiculo extends SingleAgent{
     public void obtenerPosicionObjetivo(){
         for(int i = 0; i < 500; i++)
             for(int j = 0; j < 500; j++){
-                if(mapa[i][j]==3){
+                if(mapa[i][j]==-1){
                     objetivo_x = j;
                     objetivo_y = i;
                 }
-            }
-        
-        obtenerPosicionObjetivoLibre();
-        
-    }
-    /*
-    *  @author Sergio
-    */
-    public void obtenerPosicionObjetivoLibre(){
-        for(int i = -10; i < 10; i++){
-            for(int j = -10; j < 10; j++){
-                if(mapa[objetivo_y+i][objetivo_x+j] == 3){
-                    objetivo_x_libre = objetivo_x+j;
-                    objetivo_y_libre = objetivo_y+i;
-                }
-            }
-        }   
-    }
-    
-    
+            }}
     
     /**
     *
@@ -1026,12 +1006,9 @@ public class Vehiculo extends SingleAgent{
                     veoObjetivo();
                     if(visto){
                         envio.put("visto",true);
-                        //envio.put("o_y", objetivo_y);
-                        //envio.put("o_x",objetivo_x);
-                        
-                        envio.put("o_y_libre", objetivo_y_libre);
-                        envio.put("o_x_libre", objetivo_x_libre);
-                        
+                         envio.put("o_y", objetivo_y);
+                         envio.put("o_x",objetivo_x);
+  
                     }
                     else
                         envio.put("visto",false);

@@ -327,7 +327,7 @@ public class Pizarra extends SingleAgent{
                         System.out.println("enhorabuena,Objetivo encontrado por = " + inbox.getSender().toString());
                         objetivoEncontrado=true;
                         //Enviamos primero al mas cercano
-                        rellenarMatrizScanner(recepcion.getInt("o_x_libre"),recepcion.getInt("o_y_libre"));
+                        rellenarMatrizScanner(recepcion.getInt("o_x"),recepcion.getInt("o_y"));
                         moverAgenteObjetivo(inbox.getSender().toString());
                         jframe.dispose();
                     }
