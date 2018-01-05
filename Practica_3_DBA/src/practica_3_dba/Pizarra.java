@@ -85,7 +85,7 @@ public class Pizarra extends SingleAgent{
     */
     public void conexion() throws JSONException, InterruptedException{
         envio = new JSONObject();
-        envio.put("world","map5");
+        envio.put("world","map1");
         enviar_mensaje(envio.toString(), "Achernar", ACLMessage.SUBSCRIBE);
         recibir_mensaje();
         if(recepcion.has("trace")){
@@ -327,7 +327,7 @@ public class Pizarra extends SingleAgent{
                         System.out.println("enhorabuena,Objetivo encontrado por = " + inbox.getSender().toString());
                         objetivoEncontrado=true;
                         //Enviamos primero al mas cercano
-                        rellenarMatrizScanner(recepcion.getInt("o_x"),recepcion.getInt("o_y"));
+                        rellenarMatrizScanner(recepcion.getInt("o_x_libre"),recepcion.getInt("o_y_libre"));
                         moverAgenteObjetivo(inbox.getSender().toString());
                         jframe.dispose();
                     }
