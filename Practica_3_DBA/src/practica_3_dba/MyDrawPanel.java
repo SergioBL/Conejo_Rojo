@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
  */
 public class MyDrawPanel extends javax.swing.JPanel {
     
-    BufferedImage image = new BufferedImage(510, 510, BufferedImage.TYPE_INT_RGB);
+    BufferedImage image = new BufferedImage(530, 530, BufferedImage.TYPE_INT_RGB);
     boolean radar;
 
     /**

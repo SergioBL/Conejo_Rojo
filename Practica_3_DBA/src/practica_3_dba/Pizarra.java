@@ -67,11 +67,11 @@ public class Pizarra extends SingleAgent{
         outbox = null;
         inbox = null;  
         finalizar = false;
-        mapa_compartido = new int [500][500];
+        mapa_compartido = new int [520][520];
         mapa= new JSONArray();
-        for(int i=0;i<250000;i++)
+        for(int i=0;i<270400;i++)
             mapa.put(0);
-        scanner_compartido = new int [500][500];
+        scanner_compartido = new int [520][520];
         pasosComun = 0;
         objetivoEncontrado=false;
         vehiculos = new HashMap<String, DatosVehiculo>();
@@ -232,8 +232,8 @@ public class Pizarra extends SingleAgent{
               System.out.println("Objetivo cargado de memoria x = "+pos_x + " e y = "+ pos_y);
         }
         scanner_compartido[pos_y][pos_x] = 0;
-        for(int i = 0; i < 500; i++)
-            for(int j = 0; j < 500; j++){
+        for(int i = 0; i < 520; i++)
+            for(int j = 0; j < 520; j++){
                 int distancia_x = pos_x - j;
                 int distancia_y = pos_y -i;
                 if(distancia_x<0)
@@ -260,8 +260,8 @@ public class Pizarra extends SingleAgent{
         envio = new JSONObject();
         envio.put("Accion","LlegaObjetivo");
         JSONArray scanner = new JSONArray();
-        for(int i = 0; i < 500; i++)
-            for(int j = 0; j < 500; j++)
+        for(int i = 0; i < 520; i++)
+            for(int j = 0; j < 520; j++)
                 scanner.put(scanner_compartido[i][j]);
         System.out.println("Sale sin problemas, enviando scanner ...");
         envio.put("Scanner", scanner);
@@ -304,7 +304,7 @@ public class Pizarra extends SingleAgent{
         for (Map.Entry<String, DatosVehiculo> entry : vehiculos.entrySet()) {
             DatosVehiculo vehiculo = entry.getValue();
             //Solo buscan los coches
-            if(!objetivoEncontrado){
+            if(!objetivoEncontrado && vehiculo.tipoVehiculo == Tipo.COCHE){
                 moverAgente(entry.getKey());
                 recibir_mensaje();
 
@@ -347,9 +347,9 @@ public class Pizarra extends SingleAgent{
     */
     public void obtieneMapaComun() throws JSONException{
         
-         for(int i = 0; i < mapa.length(); i+=500)
-            for(int j = 0; j < 500; j++)
-                mapa_compartido[i/500][j] = mapa.getInt(i+j);
+         for(int i = 0; i < mapa.length(); i+=520)
+            for(int j = 0; j < 520; j++)
+                mapa_compartido[i/520][j] = mapa.getInt(i+j);
     }
     /**
     *
