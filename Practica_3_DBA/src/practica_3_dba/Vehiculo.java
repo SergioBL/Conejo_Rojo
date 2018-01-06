@@ -53,6 +53,24 @@ public class Vehiculo extends SingleAgent{
     private int objetivo_y;
     private MyDrawPanel m;
     private JFrame jframe;
+    private ArrayList<PuntoOcupado> puntosOcupados;
+    
+    class PuntoOcupado{
+        private int x; 
+        private int y;
+        
+        PuntoOcupado(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+        
+        public boolean iguales(int x, int y){
+            boolean iguales = false;
+            if(this.x == x && this.y == y)
+                iguales = true;
+            return iguales;
+        }
+    };
    
     
     /**
@@ -71,6 +89,7 @@ public class Vehiculo extends SingleAgent{
         paso = 0;
         scanner = null;
         this.nombre = aid.name;
+        puntosOcupados = new ArrayList();
         inicializarMapa();
     }
     
@@ -79,7 +98,7 @@ public class Vehiculo extends SingleAgent{
     * @author Alex  Joaquin
     */
     public boolean conexion() throws InterruptedException, JSONException{
-        //Recibimos el request de pizarra1
+        //Recibimos el request de pizarra2
         recibir_mensaje();
         //Construimos el mensaje
         envio = new JSONObject();
@@ -92,9 +111,9 @@ public class Vehiculo extends SingleAgent{
         if(inbox.getPerformativeInt()==ACLMessage.REFUSE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){ 
             envio = new JSONObject();
             envio.put("details : "+this.nombre,recepcion.getString("details"));
-             enviar_mensaje(envio.toString(), "pizarra1", ACLMessage.REFUSE);
+             enviar_mensaje(envio.toString(), "pizarra2", ACLMessage.REFUSE);
             return false;
-        }//En caso contrario, la conexión tiene exito y enviamos a pizarra1 quien somos y que somos
+        }//En caso contrario, la conexión tiene exito y enviamos a pizarra2 quien somos y que somos
         else{
             JSONObject datos = recepcion.getJSONObject("capabilities"); 
             fuelrate = datos.getInt("fuelrate");
@@ -114,7 +133,7 @@ public class Vehiculo extends SingleAgent{
             enviar_mensaje("","Achernar",ACLMessage.QUERY_REF);
             recibir_mensaje();
             if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
-                enviar_mensaje(" ", "pizarra1", ACLMessage.REFUSE);
+                enviar_mensaje(" ", "pizarra2", ACLMessage.REFUSE);
                 return false;
             }else
                 actualizarDatos();
@@ -124,8 +143,8 @@ public class Vehiculo extends SingleAgent{
             envio.put("ID",nombreVehiculo);
             envio.put("x", gps_x);
             envio.put("y", gps_y);
-            //Avisamos a pizarra1
-            enviar_mensaje(envio.toString(), "pizarra1", ACLMessage.INFORM);
+            //Avisamos a pizarra2
+            enviar_mensaje(envio.toString(), "pizarra2", ACLMessage.INFORM);
             return true;
         }
             
@@ -227,13 +246,10 @@ public class Vehiculo extends SingleAgent{
     */
     public void obtieneScanner() throws JSONException{
         scanner = new int[520][520];
-        System.out.println("Vehiculo  -  ObtieneScanner");
         JSONArray scan = recepcion.getJSONArray("Scanner");
-        System.out.println("Vehiculo  -  ObtieneScanner2");
         for(int i = 0; i < scan.length(); i+=520)
             for(int j = 0; j < 520; j++)
                 scanner[i/520][j] = scan.getInt(i+j);
-        System.out.println("Vehiculo  -  ObtieneScanner3");
     }
     
     /**
@@ -241,7 +257,7 @@ public class Vehiculo extends SingleAgent{
     * @author Alex Sergio Salomé Joaquín
     */
     public void enviar_mensaje(String mensaje, String receptor, int performativa){
-        System.out.println("Vehiculo " + fuelrate + " envia: " +mensaje + " a "+receptor);
+        System.out.println("Vehiculo " + nombre + " envia: " +mensaje + " a "+receptor);
         outbox = new ACLMessage();
         outbox.setSender(getAid());
         //Para contestar con la id de la conversacion
@@ -264,7 +280,7 @@ public class Vehiculo extends SingleAgent{
         inbox = receiveACLMessage();
         recepcion = new JSONObject(inbox.getContent());
         String recepcion_plano = recepcion.toString();
-        System.out.println("Vehiculo " + fuelrate + " recibe: " + recepcion_plano);
+        System.out.println("Vehiculo " + nombre + " recibe: " + recepcion_plano);
         if(inbox.getPerformativeInt()==ACLMessage.REQUEST && conversacion_id == null){
             if(recepcion.has("ID")){
                 conversacion_id = recepcion.getString("ID");
@@ -302,7 +318,7 @@ public class Vehiculo extends SingleAgent{
     @Override
     public void finalize(){
         try {
-            System.out.println("Vehiculo " + getAid() + " muerto");
+            System.out.println("Vehiculo " + nombre + " muerto");
         } finally {
             super.finalize();
         }
@@ -317,7 +333,7 @@ public class Vehiculo extends SingleAgent{
         String movimiento = "";
         int menor_paso = 50000;
         float menor_distancia = 50000;
-        
+        boolean igual;
         
         int rn, rs, re, rw, rne, rnw, rse, rsw;
         int sn, ss, se, sw, sne, snw, sse, ssw;
@@ -353,113 +369,163 @@ public class Vehiculo extends SingleAgent{
         
         
         if(rnw != 1 && rnw != 4 && rnw != 2){
-            movimiento = "moveNW";                      
-            menor_paso = mapa[10 + gps_y-1][10 + gps_x-1];
-            menor_distancia = snw;
+            igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x-1,10+gps_y-1);
+            }
+            if(!igual){
+                movimiento = "moveNW";                      
+                menor_paso = mapa[10 + gps_y-1][10 + gps_x-1];
+                menor_distancia = snw;
+            }
         }
 
         if(rn != 1 && mapa[10 + gps_y-1][10 + gps_x] <= menor_paso && rn != 2 && rn != 4){
-            if(mapa[10 + gps_y-1][10 + gps_x] == menor_paso){
-                if(sn < menor_distancia){
-                    movimiento = "moveN";
-                    menor_distancia = sn;
-                }
+            igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x,10+gps_y-1);
             }
-            else{
-                movimiento = "moveN";
-                menor_paso = mapa[10 + gps_y-1][10 + gps_x];
-                menor_distancia = sn;
-            }  
-
+            if(!igual){
+                if(mapa[10 + gps_y-1][10 + gps_x] == menor_paso){
+                    if(sn < menor_distancia){
+                        movimiento = "moveN";
+                        menor_distancia = sn;
+                    }
+                }
+                else{
+                    movimiento = "moveN";
+                    menor_paso = mapa[10 + gps_y-1][10 + gps_x];
+                    menor_distancia = sn;
+                }     
+            }
         }             
 
         if(rne != 1 && mapa[10 + gps_y-1][10 + gps_x+1] <= menor_paso && rne != 2 && rne != 4){
-            if(mapa[10 + gps_y-1][10 + gps_x+1] == menor_paso){
-                if(sne < menor_distancia){
-                    movimiento = "moveNE";
-                    menor_distancia = sne;
-                }
+            igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(punto.iguales(10+gps_x+1,10+gps_y-1))
+                    igual = true;
             }
-            else{
-                movimiento = "moveNE";
-                menor_paso = mapa[10 + gps_y-1][10 + gps_x+1];
-                menor_distancia = sne;
-            }    
-
+            if(!igual){
+                if(mapa[10 + gps_y-1][10 + gps_x+1] == menor_paso){
+                    if(sne < menor_distancia){
+                        movimiento = "moveNE";
+                        menor_distancia = sne;
+                    }
+                }
+                else{
+                    movimiento = "moveNE";
+                    menor_paso = mapa[10 + gps_y-1][10 + gps_x+1];
+                    menor_distancia = sne;
+                }    
+            }
         }
 
        if(rw != 1 && mapa[10 + gps_y][10 + gps_x-1] <= menor_paso && rw != 2 && rw != 4){
-            if(mapa[10 + gps_y][10 + gps_x-1] == menor_paso){
-                if(sw < menor_distancia){
-                    movimiento = "moveW";
-                    menor_distancia = sw;
-                }
+           igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x-1,10+gps_y);
             }
-            else{
-                movimiento = "moveW";
-                menor_paso = mapa[10 + gps_y][10 + gps_x-1];
-                menor_distancia = sw;
-            }  
-
+            if(!igual){
+                if(mapa[10 + gps_y][10 + gps_x-1] == menor_paso){
+                    if(sw < menor_distancia){
+                        movimiento = "moveW";
+                        menor_distancia = sw;
+                    }
+                }
+                else{
+                    movimiento = "moveW";
+                    menor_paso = mapa[10 + gps_y][10 + gps_x-1];
+                    menor_distancia = sw;
+                }  
+            }
         }
 
         if(re != 1 && mapa[10 + gps_y][10 + gps_x+1] <= menor_paso && re != 2 && re != 4){
-            if(mapa[10 + gps_y][10 + gps_x+1] == menor_paso){
-                if(se < menor_distancia){
-                    movimiento = "moveE";         
-                    menor_distancia = se;
-                }
+            igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x+1,10+gps_y);
             }
-            else{
-                movimiento = "moveE";
-                menor_paso = mapa[10 + gps_y][10 + gps_x+1];
-                menor_distancia = se;
-            }   
-
+            if(!igual){
+                if(mapa[10 + gps_y][10 + gps_x+1] == menor_paso){
+                    if(se < menor_distancia){
+                        movimiento = "moveE";         
+                        menor_distancia = se;
+                    }
+                }
+                else{
+                    movimiento = "moveE";
+                    menor_paso = mapa[10 + gps_y][10 + gps_x+1];
+                    menor_distancia = se;
+                }   
+            }
         }
 
         if(rsw != 1 && mapa[10 + gps_y+1][10 + gps_x-1] <= menor_paso && rsw != 2 && rsw != 4){
-            if(mapa[10 + gps_y+1][10 + gps_x-1] == menor_paso){
-                if(ssw < menor_distancia){
-                    movimiento = "moveSW";  
+            igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x-1,10+gps_y+1);
+            }
+            if(!igual){
+                if(mapa[10 + gps_y+1][10 + gps_x-1] == menor_paso){
+                    if(ssw < menor_distancia){
+                        movimiento = "moveSW";  
+                        menor_distancia = ssw;
+                    }
+                }
+                else{
+                    movimiento = "moveSW";
+                    menor_paso = mapa[10 + gps_y+1][10 + gps_x-1];
                     menor_distancia = ssw;
                 }
             }
-            else{
-                movimiento = "moveSW";
-                menor_paso = mapa[10 + gps_y+1][10 + gps_x-1];
-                menor_distancia = ssw;
-            }                    
         }
 
        if(rs != 1 && mapa[10 + gps_y+1][10 + gps_x] <= menor_paso && rs != 2 && rs != 4){
-            if(mapa[10 + gps_y+1][10 + gps_x] == menor_paso){
-                if(ss < menor_distancia){
+           igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x,10+gps_y+1);
+            }
+            if(!igual){
+                if(mapa[10 + gps_y+1][10 + gps_x] == menor_paso){
+                    if(ss < menor_distancia){
+                        movimiento = "moveS";
+                        menor_distancia = ss;
+                    }
+                }
+                else{
                     movimiento = "moveS";
+                    menor_paso = mapa[10 + gps_y+1][10 + gps_x];
                     menor_distancia = ss;
                 }
             }
-            else{
-                movimiento = "moveS";
-                menor_paso = mapa[10 + gps_y+1][10 + gps_x];
-                menor_distancia = ss;
-            }   
-
         }
 
         if(rse != 1 && mapa[10 + gps_y+1][10 + gps_x+1] <= menor_paso && rse != 2 && rse != 4){
-            if(mapa[10 + gps_y+1][10 + gps_x+1] == menor_paso){
-                if(sse < menor_distancia){
-                    movimiento = "moveSE";
-                    menor_distancia = sse;
-                }
+            igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x+1,10+gps_y+1);
             }
-            else{
-                movimiento = "moveSE";
-                menor_paso = mapa[10 + gps_y+1][10 + gps_x+1];
-                menor_distancia = sse;
-            }   
-
+            if(!igual){
+                if(mapa[10 + gps_y+1][10 + gps_x+1] == menor_paso){
+                    if(sse < menor_distancia){
+                        movimiento = "moveSE";
+                        menor_distancia = sse;
+                    }
+                }
+                else{
+                    movimiento = "moveSE";
+                    menor_paso = mapa[10 + gps_y+1][10 + gps_x+1];
+                    menor_distancia = sse;
+                }   
+            }
         }
         
         movimiento = comprobarObjetivoAlrededor(movimiento);
@@ -618,6 +684,7 @@ public class Vehiculo extends SingleAgent{
         String movimiento = "";
         int menor_distancia = 25001;
         ArrayList<String> movimientos = new ArrayList();
+        boolean igual;
         
         Random random = new Random();
         
@@ -644,75 +711,128 @@ public class Vehiculo extends SingleAgent{
         
         
         if(rnw != 2 && rnw != 4){
-            movimiento = "moveNW";  
-            movimientos.add(movimiento);
-            menor_distancia = snw; 
+            igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x-1,10+gps_y-1);
+            }
+            if(!igual){
+                movimiento = "moveNW";  
+                movimientos.add(movimiento);
+                menor_distancia = snw; 
+            }
         }
                               
         if(sn <= menor_distancia && rn != 2 && rn != 4){
-            movimiento = "moveN";
-            if(sn < menor_distancia){
-                menor_distancia = sn;
-                movimientos.clear();
-            }         
-            movimientos.add(movimiento);
-                                         
+            igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x,10+gps_y-1);
+            }
+            if(!igual){
+                movimiento = "moveN";
+                if(sn < menor_distancia){
+                    menor_distancia = sn;
+                    movimientos.clear();
+                }         
+                movimientos.add(movimiento);
+            }
         }             
 
         if(sne <= menor_distancia && rne != 2 && rne != 4){         
-            movimiento = "moveNE";
-            if(sne < menor_distancia){
-                menor_distancia = sne;
-                movimientos.clear();
+            igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x+1,10+gps_y-1);
             }
-            movimientos.add(movimiento);
+            if(!igual){
+                movimiento = "moveNE";
+                if(sne < menor_distancia){
+                    menor_distancia = sne;
+                    movimientos.clear();
+                }
+                movimientos.add(movimiento);
+            }
         }
 
        if(sw <= menor_distancia && rw != 2 && rw != 4){
-            movimiento = "moveW";
-            if(sw < menor_distancia){
-                menor_distancia = sw;
-                movimientos.clear();
+           igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x-1,10+gps_y);
             }
-            
-            movimientos.add(movimiento);
+            if(!igual){
+                movimiento = "moveW";
+                if(sw < menor_distancia){
+                    menor_distancia = sw;
+                    movimientos.clear();
+                }
+                movimientos.add(movimiento);
+            }
         }
 
-        if(se <= menor_distancia && re != 2 && re != 4){ 
-            movimiento = "moveE";
-            if(se < menor_distancia){
-                menor_distancia = se;
-                movimientos.clear();
+        if(se <= menor_distancia && re != 2 && re != 4){
+            igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x+1,10+gps_y);
             }
-            
-            movimientos.add(movimiento);
+            if(!igual){
+                movimiento = "moveE";
+                if(se < menor_distancia){
+                    menor_distancia = se;
+                    movimientos.clear();
+                }
+                movimientos.add(movimiento);
+            }
            }
 
         if(ssw <= menor_distancia && rsw != 2 && rsw != 4){
-            movimiento = "moveSW";
-            if(ssw < menor_distancia){
-                menor_distancia = ssw;    
-                movimientos.clear();    
+            igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x-1,10+gps_y+1);
             }
-            movimientos.add(movimiento);
+            if(!igual){
+                movimiento = "moveSW";
+                if(ssw < menor_distancia){
+                    menor_distancia = ssw;    
+                    movimientos.clear();    
+                }
+                movimientos.add(movimiento);
+            }
         }
 
        if(ss <= menor_distancia && rs != 2 && rs != 4){
-            movimiento = "moveS";
-            if(ss < menor_distancia){
-                menor_distancia = ss;
-                movimientos.clear();
+           igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x,10+gps_y+1);
             }
-            movimientos.add(movimiento);
+            if(!igual){
+                movimiento = "moveS";
+                if(ss < menor_distancia){
+                    menor_distancia = ss;
+                    movimientos.clear();
+                }
+                movimientos.add(movimiento);
+            }
         }
 
         if(sse <= menor_distancia && rse != 2 && rse != 4){   
-            movimiento = "moveSE";
-            if(sse < menor_distancia){
-                menor_distancia = sse;
-                movimientos.clear();
+            igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x+1,10+gps_y+1);
             }
-            movimientos.add(movimiento);
+            if(!igual){
+                movimiento = "moveSE";
+                if(sse < menor_distancia){
+                    menor_distancia = sse;
+                    movimientos.clear();
+                }
+                movimientos.add(movimiento);
+            }
         }      
        
         
@@ -906,40 +1026,107 @@ public class Vehiculo extends SingleAgent{
             se = radar[2][2];
         }
         
-        
         if(no == 3 && no != 4){
-            movimiento = "moveNW";
+            boolean igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x-1,10+gps_y-1);
+            }
+            if(!igual){
+                movimiento = "moveNW";
+            }
         }    
 
         if(n == 3 && n != 4){
-            movimiento = "moveN";
+            boolean igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x,10+gps_y-1);
+            }
+            if(!igual){
+                movimiento = "moveN";
+            }
         }
 
         if(ne == 3 && ne != 4){
-            movimiento = "moveNE";
+            boolean igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x+1,10+gps_y-1);
+            }
+            if(!igual){
+                movimiento = "moveNE";
+            }
         }
 
         if(o == 3 && o != 4){
-            movimiento = "moveW";
+            boolean igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x-1,10+gps_y);
+            }
+            if(!igual){
+                movimiento = "moveW";
+            }
         }
 
         if(e == 3 && e != 4){
-            movimiento = "moveE";
+            boolean igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x+1,10+gps_y);
+            }
+            if(!igual){
+                movimiento = "moveE";
+            }
         }
 
         if(so == 3 && so != 4){
-            movimiento = "moveSW";
+            boolean igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x-1,10+gps_y+1);
+            }
+            if(!igual){
+                movimiento = "moveSW";
+            }
         }
 
         if(s == 3 && s != 4){
-            movimiento = "moveS";
+            boolean igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x,10+gps_y+1);
+            }
+            if(!igual){
+                movimiento = "moveS";
+            }
         }
 
         if(se == 3 && se != 4){
-            movimiento = "moveSE";
+            boolean igual = false;
+            for(PuntoOcupado punto : puntosOcupados){
+                if(!igual)
+                    igual = punto.iguales(10+gps_x+1,10+gps_y+1);
+            }
+            if(!igual){
+                movimiento = "moveSE";
+            }
         }
         
         return movimiento;
+    }
+    
+    /**
+     *  @author Alex
+     */
+    public void compruebaOcupados() throws JSONException{
+        JSONArray ocupados = recepcion.getJSONArray("Ocupados");
+        for(int i = 0; i < ocupados.length(); i++){
+            JSONObject objeto= ocupados.getJSONObject(i);
+            PuntoOcupado punto = new PuntoOcupado(objeto.getInt("x"),objeto.getInt("y"));
+            puntosOcupados.add(punto);
+        }
     }
     
     /**
@@ -983,16 +1170,16 @@ public class Vehiculo extends SingleAgent{
                         finalizar =true;
                         envio = new JSONObject();
                         envio.put("details : "+this.nombre,recepcion.getString("details"));
-                        enviar_mensaje(envio.toString(),"pizarra1",ACLMessage.REFUSE);
+                        enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
                 }
                 else{
-                    //actualizamos los datos ya que nos hemos movido y se lo enviamos a pizarra1
+                    //actualizamos los datos ya que nos hemos movido y se lo enviamos a pizarra2
                     envio = new JSONObject();
 
                     enviar_mensaje("","Achernar",ACLMessage.QUERY_REF);
                     recibir_mensaje();
                     if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
-                        enviar_mensaje(recepcion.toString(),"pizarra1",ACLMessage.REFUSE);
+                        enviar_mensaje(recepcion.toString(),"pizarra2",ACLMessage.REFUSE);
                     }else
                         actualizarDatos();
 
@@ -1020,20 +1207,21 @@ public class Vehiculo extends SingleAgent{
                     envio.put("energy", energy);
                     envio.put("Bateria", bateria);
                     
-                    enviar_mensaje(envio.toString(), "pizarra1", ACLMessage.INFORM);  
+                    enviar_mensaje(envio.toString(), "pizarra2", ACLMessage.INFORM);  
                 }
             }//Alvaro
             else if(recepcion.getString("Accion").equals("LlegaObjetivo")){
                 if(scanner == null){
                     paso = 0;
                     obtieneScanner();
+                    compruebaOcupados();
                     inicializarMapa();
                     jframe = new JFrame();
                     m = new MyDrawPanel(mapa,true);
                     jframe.add(m);
                     jframe.setSize(mapa.length, mapa.length);
                     jframe.setVisible(true);
-                    jframe.setTitle("Gugel2");
+                    jframe.setTitle(this.nombre);
                 }
                 
                 while(!goal || finalizar){ 
@@ -1052,7 +1240,7 @@ public class Vehiculo extends SingleAgent{
                             finalizar = true;
                             envio = new JSONObject();
                             envio.put("details : "+this.nombre,recepcion.getString("details"));
-                            enviar_mensaje(envio.toString(),"pizarra1",ACLMessage.REFUSE);
+                            enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
                             
                         }
                         else{
@@ -1064,7 +1252,7 @@ public class Vehiculo extends SingleAgent{
                             if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
                                 envio = new JSONObject();
                                 envio.put("details : "+this.nombre,recepcion.getString("details"));
-                                enviar_mensaje(envio.toString(),"pizarra1",ACLMessage.REFUSE);
+                                enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
                             }
                             else{                               
                                 actualizarDatos();
@@ -1090,7 +1278,7 @@ public class Vehiculo extends SingleAgent{
                             finalizar =true;
                             envio = new JSONObject();
                             envio.put("details : "+this.nombre,recepcion.getString("details"));
-                            enviar_mensaje(envio.toString(),"pizarra1",ACLMessage.REFUSE);
+                            enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
                         }else{   
                             envio = new JSONObject();
 
@@ -1099,7 +1287,7 @@ public class Vehiculo extends SingleAgent{
                             if(inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
                                 envio = new JSONObject();
                                 envio.put("details : "+this.nombre,recepcion.getString("details"));
-                                enviar_mensaje(envio.toString(),"pizarra1",ACLMessage.REFUSE);
+                                enviar_mensaje(envio.toString(),"pizarra2",ACLMessage.REFUSE);
                             }else
                                 actualizarDatos();
                         }
@@ -1112,8 +1300,10 @@ public class Vehiculo extends SingleAgent{
                     finalizar = true;
                     envio = new JSONObject();
                     envio.put("EnObjetivo", true);
+                    envio.put("x_o",gps_x+10);
+                    envio.put("y_o", gps_y+10);
                     jframe.dispose();
-                    enviar_mensaje(envio.toString(),"pizarra1", ACLMessage.INFORM);                  
+                    enviar_mensaje(envio.toString(),"pizarra2", ACLMessage.INFORM);                  
                 }               
             }   
         }

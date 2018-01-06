@@ -44,18 +44,16 @@ public class Pizarra extends SingleAgent{
     private int EnergiaTotal;
     private int NvehiculosObjetivo;
     private MyDrawPanel m;
-    private MyDrawPanel scanner_draw;
     private JFrame jframe;
     private Memoria memoria;
-    private JFrame jframe_2;
     
     class DatosVehiculo{
         public Tipo tipoVehiculo; 
         public int Bateria;  
         public int x; 
         public int y;
-        private boolean visto;
-        private boolean EnObjetivo;
+        public boolean visto;
+        public boolean EnObjetivo = false;
     };
 
     /**
@@ -77,7 +75,7 @@ public class Pizarra extends SingleAgent{
         vehiculos = new HashMap<String, DatosVehiculo>();
         EnergiaTotal=0;
         NvehiculosObjetivo=0;
-        mapa_explorar = "map2";
+        mapa_explorar = "map5";
         memoria= new Memoria(mapa_explorar);
     }
     
@@ -99,7 +97,7 @@ public class Pizarra extends SingleAgent{
         envio.put("Mapa",c.getStringComprimido());
         envio.put("Pasos", pasosComun);
         for(int i = 1; i <= 4; i++){
-            int aux = i+4;
+            int aux = i;
             enviar_mensaje(envio.toString(), "vehiculo"+aux, ACLMessage.REQUEST);
             recibir_mensaje();
             
@@ -188,8 +186,10 @@ public class Pizarra extends SingleAgent{
             System.out.println("Pizarra NOTUNDERSTOOD: " + recepcion_plano);
         }else if(inbox.getPerformativeInt() == ACLMessage.FAILURE){
             System.out.println("Pizarra FAILURE: " + recepcion_plano);
+            finalizar = true;
         }else if(inbox.getPerformativeInt() == ACLMessage.REFUSE){
             System.out.println("Pizarra REFUSE: " + recepcion_plano);
+            finalizar = true;
         }
     }
     
@@ -215,13 +215,6 @@ public class Pizarra extends SingleAgent{
         int pos_x = x;
         int pos_y = y;
         
-        jframe_2 = new JFrame();
-        scanner_draw = new MyDrawPanel(scanner_compartido, false);
-        jframe_2.add(scanner_draw);
-        jframe_2.setSize(scanner_compartido.length, scanner_compartido.length);
-        jframe_2.setVisible(true);
-        jframe_2.setTitle("SCANNER");
-        
         if(!memoria.leer()){
              memoria.escribir(Integer.toString(x),Integer.toString(y));
               System.out.println("Escribiendo objetivo en TXT");
@@ -246,8 +239,6 @@ public class Pizarra extends SingleAgent{
                     scanner_compartido[i][j] = distancia_y;
                 
             }
-        scanner_draw.Update(scanner_compartido);
-        scanner_draw.repaint();
         System.out.println("Terminado sin problemas, cargando ....");
     }
     
@@ -263,20 +254,30 @@ public class Pizarra extends SingleAgent{
         for(int i = 0; i < 520; i++)
             for(int j = 0; j < 520; j++)
                 scanner.put(scanner_compartido[i][j]);
+        JSONArray ocupados = new JSONArray();
+        for (Map.Entry<String, DatosVehiculo> entry : vehiculos.entrySet()){
+            DatosVehiculo vehiculo = entry.getValue();
+            if(vehiculo.EnObjetivo){
+                JSONObject punto = new JSONObject();
+                punto.put("x",vehiculo.x);
+                punto.put("y",vehiculo.y);
+                ocupados.put(punto);
+            }
+        }
         System.out.println("Sale sin problemas, enviando scanner ...");
+        envio.put("Ocupados", ocupados);
         envio.put("Scanner", scanner);
         //Enviamos el siguiente movimiento
         System.out.println("Sale sin problemas 2");
         enviar_mensaje(envio.toString(),nombreAgent,ACLMessage.REQUEST);
         System.out.println("Sale sin problemas 3");
-        recibir_mensaje();           
+        recibir_mensaje();
     }
     /**
     *
     * @author Joaquin
     */
     public void siguienteVehiculoObjetivo()throws JSONException, InterruptedException{
-        System.out.println("numero de vehiculos" +vehiculos.size());
         int distancia = 25001;
         String enviar = "";
         for (Map.Entry<String, DatosVehiculo> entry : vehiculos.entrySet()) {
@@ -365,7 +366,7 @@ public class Pizarra extends SingleAgent{
             jframe.add(m);
             jframe.setSize(mapa_compartido.length, mapa_compartido.length);
             jframe.setVisible(true);
-            jframe.setTitle("Gugel");
+            jframe.setTitle("Mapa compartido");
             while(!finalizar){
                 actuar();
             }
@@ -418,35 +419,34 @@ public class Pizarra extends SingleAgent{
         if(objetivoEncontrado){
             if(recepcion.has("EnObjetivo")){
                  if(recepcion.getBoolean("EnObjetivo")){
-                    NvehiculosObjetivo++;
                     System.out.println("vehiculo " + inbox.getSender().toString()+" enObjetivo");
                     DatosVehiculo vActualDato = vehiculos.get(inbox.getSender().toString());
                     vActualDato.EnObjetivo = recepcion.getBoolean("EnObjetivo");
+                    vActualDato.x = recepcion.getInt("x_o");
+                    vActualDato.y = recepcion.getInt("y_o");
                     vehiculos.put(inbox.getSender().toString(), vActualDato);
                     System.out.println("Pizarra  -  HashVehiculos actualizados");
                  }
             }
             if(NvehiculosObjetivo<4){
                 siguienteVehiculoObjetivo();
-                //NvehiculosObjetivo++;
+                NvehiculosObjetivo++;
             }else if(NvehiculosObjetivo==4){
                  EnObjetivo=true;
-                 System.out.println("Todos o casi todos en objetivo");
+                 System.out.println("Todos en objetivo");
                  
                  envio = new JSONObject();
                  envio.put("","");
                  enviar_mensaje(envio.toString(),"achernar",ACLMessage.CANCEL);
                  finalizar=true;
-                 jframe_2.dispose();
             }
-
         }
         ////////////////////Fin-llegadaObjetivo////////////////////////////
         
         ///////////////////////fin///////////////////
         
         if(recepcion.has("trace")){
-            System.out.println("Programa Terminado la traza es =  " + recepcion.getJSONArray("trace"));
+            System.out.println("La ultima traza es =  " + recepcion.getJSONArray("trace"));
         }
         ///////////////////////Fin-fin///////////////////
     }
