@@ -75,7 +75,7 @@ public class Pizarra extends SingleAgent{
         vehiculos = new HashMap<String, DatosVehiculo>();
         EnergiaTotal=0;
         NvehiculosObjetivo=0;
-        mapa_explorar = "map5";
+        mapa_explorar = "map9";
         memoria= new Memoria(mapa_explorar);
     }
     

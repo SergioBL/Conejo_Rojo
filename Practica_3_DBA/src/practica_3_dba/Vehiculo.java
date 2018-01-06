@@ -213,8 +213,8 @@ public class Vehiculo extends SingleAgent{
             medio=1;
         for(int i = 0; i < range; i++)
             for(int j = 0; j < range; j++){
-                if(radar[i][j]==1 || radar[i][j] == 2)
-                    mapa[10 + gps_y - medio + i][10 + gps_x - medio + j] = 50000;
+                if(radar[i][j] == 2)
+                    mapa[10 + gps_y - medio + i][10 + gps_x - medio + j] = -1;
                 else if(radar[i][j]==3)
                    mapa[10 + gps_y - medio + i][10 + gps_x - medio + j] = -1;
             }
