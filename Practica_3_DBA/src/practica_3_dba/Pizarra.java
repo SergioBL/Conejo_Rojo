@@ -75,7 +75,7 @@ public class Pizarra extends SingleAgent{
         vehiculos = new HashMap<String, DatosVehiculo>();
         EnergiaTotal=0;
         NvehiculosObjetivo=0;
-        mapa_explorar = "map9";
+        mapa_explorar = "map10";
         memoria= new Memoria(mapa_explorar);
     }
     
@@ -97,7 +97,7 @@ public class Pizarra extends SingleAgent{
         envio.put("Mapa",c.getStringComprimido());
         envio.put("Pasos", pasosComun);
         for(int i = 1; i <= 4; i++){
-            int aux = i;
+            int aux = i+12;
             enviar_mensaje(envio.toString(), "vehiculo"+aux, ACLMessage.REQUEST);
             recibir_mensaje();
             
@@ -264,13 +264,10 @@ public class Pizarra extends SingleAgent{
                 ocupados.put(punto);
             }
         }
-        System.out.println("Sale sin problemas, enviando scanner ...");
         envio.put("Ocupados", ocupados);
         envio.put("Scanner", scanner);
         //Enviamos el siguiente movimiento
-        System.out.println("Sale sin problemas 2");
         enviar_mensaje(envio.toString(),nombreAgent,ACLMessage.REQUEST);
-        System.out.println("Sale sin problemas 3");
         recibir_mensaje();
     }
     /**
@@ -278,22 +275,24 @@ public class Pizarra extends SingleAgent{
     * @author Joaquin
     */
     public void siguienteVehiculoObjetivo()throws JSONException, InterruptedException{
-        int distancia = 25001;
+        int distancia = 9000000;
         String enviar = "";
         for (Map.Entry<String, DatosVehiculo> entry : vehiculos.entrySet()) {
             DatosVehiculo vehiculo = entry.getValue();
             if(!vehiculo.EnObjetivo){
                int dis = scanner_compartido[vehiculo.y][vehiculo.x];
+               int gasta = 1;
+               if(vehiculo.tipoVehiculo == Tipo.CAMION)
+                   gasta = 4;
+               dis *= gasta;
                if(dis<distancia){
                    distancia = dis;
                    enviar = entry.getKey();
                }
             }           
         }
-        if(!enviar.equals("")){
-            System.out.println("Siguiente vehiculo: " + enviar);
+        if(!enviar.equals(""))
             moverAgenteObjetivo(enviar);
-        }
             
     }
     
@@ -362,7 +361,7 @@ public class Pizarra extends SingleAgent{
         try {
             conexion();
             jframe = new JFrame();
-            m = new MyDrawPanel(mapa_compartido, true);
+            m = new MyDrawPanel(mapa_compartido);
             jframe.add(m);
             jframe.setSize(mapa_compartido.length, mapa_compartido.length);
             jframe.setVisible(true);
@@ -385,6 +384,14 @@ public class Pizarra extends SingleAgent{
     public void finalize(){
         try {
             System.out.println("Pizarra muerto");
+            envio = new JSONObject();
+            envio.put("","");
+            enviar_mensaje(envio.toString(),"achernar",ACLMessage.CANCEL);
+            if(recepcion.has("trace")){
+                System.out.println("La ultima traza es =  " + recepcion.getJSONArray("trace"));
+            }
+        } catch (JSONException ex) {
+            Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             super.finalize();
         }
@@ -434,21 +441,9 @@ public class Pizarra extends SingleAgent{
             }else if(NvehiculosObjetivo==4){
                  EnObjetivo=true;
                  System.out.println("Todos en objetivo");
-                 
-                 envio = new JSONObject();
-                 envio.put("","");
-                 enviar_mensaje(envio.toString(),"achernar",ACLMessage.CANCEL);
                  finalizar=true;
             }
         }
-        ////////////////////Fin-llegadaObjetivo////////////////////////////
-        
-        ///////////////////////fin///////////////////
-        
-        if(recepcion.has("trace")){
-            System.out.println("La ultima traza es =  " + recepcion.getJSONArray("trace"));
-        }
-        ///////////////////////Fin-fin///////////////////
     }
     
 }
