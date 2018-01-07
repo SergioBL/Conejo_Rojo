@@ -8,6 +8,7 @@ package practica_3_dba;
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
 import es.upv.dsic.gti_ia.core.SingleAgent;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,7 +76,7 @@ public class Pizarra extends SingleAgent{
         vehiculos = new HashMap<String, DatosVehiculo>();
         EnergiaTotal=0;
         NvehiculosObjetivo=0;
-        mapa_explorar = "map10";
+        mapa_explorar = "map1";
         memoria= new Memoria(mapa_explorar);
     }
     
@@ -384,14 +385,6 @@ public class Pizarra extends SingleAgent{
     public void finalize(){
         try {
             System.out.println("Pizarra muerto");
-            envio = new JSONObject();
-            envio.put("","");
-            enviar_mensaje(envio.toString(),"achernar",ACLMessage.CANCEL);
-            if(recepcion.has("trace")){
-                System.out.println("La ultima traza es =  " + recepcion.getJSONArray("trace"));
-            }
-        } catch (JSONException ex) {
-            Logger.getLogger(Pizarra.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             super.finalize();
         }
@@ -439,9 +432,29 @@ public class Pizarra extends SingleAgent{
                 siguienteVehiculoObjetivo();
                 NvehiculosObjetivo++;
             }else if(NvehiculosObjetivo==4){
-                 EnObjetivo=true;
-                 System.out.println("Todos en objetivo");
-                 finalizar=true;
+                EnObjetivo=true;
+                System.out.println("Todos en objetivo");
+                finalizar=true;
+                envio = new JSONObject();
+                envio.put("","");
+                enviar_mensaje(envio.toString(),"achernar",ACLMessage.CANCEL);
+                recibir_mensaje();
+                if(recepcion.has("trace")){
+                    JSONArray traza= recepcion.getJSONArray("trace");
+                    try{
+                        byte data[]=new byte[traza.length()];
+                        for(int x=0; x<data.length; x++){
+                            data[x]=(byte) traza.getInt(x);
+                        }
+                        try (FileOutputStream fos = new FileOutputStream(conversacion_id+"_"+mapa+".png")) {
+                            fos.write(data);
+                        }
+                        System.out.println("Traza Guardada");
+                    } 
+                    catch (IOException ex){
+                        System.err.println("Error procesando traza");
+                    }
+                }
             }
         }
     }
