@@ -991,7 +991,7 @@ public class Vehiculo extends SingleAgent{
     
     /**
     *
-    * @author Alvaro Alex
+    * @author Alvaro Alex Sergio
     */
     public String comprobarObjetivoAlrededor(String ultimo_movimiento){
         String movimiento = ultimo_movimiento;
@@ -1119,7 +1119,7 @@ public class Vehiculo extends SingleAgent{
     }
     
     /**
-     *  @author Alex
+     *  @author Alex Sergio
      */
     public void compruebaOcupados() throws JSONException{
         JSONArray ocupados = recepcion.getJSONArray("Ocupados");

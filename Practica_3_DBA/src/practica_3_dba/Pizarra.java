@@ -246,7 +246,7 @@ public class Pizarra extends SingleAgent{
     
     /**
     *
-    * @author Joaquin
+    * @author Joaquin Sergio
     */
     public void moverAgenteObjetivo(String nombreAgent) throws JSONException, InterruptedException{
         envio = new JSONObject();
