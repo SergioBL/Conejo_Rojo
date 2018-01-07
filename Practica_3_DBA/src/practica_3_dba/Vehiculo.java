@@ -51,7 +51,7 @@ public class Vehiculo extends SingleAgent{
     private boolean visto;
     private int objetivo_x;
     private int objetivo_y;
-    private MyDrawPanel m;
+    private DibujarMapa m;
     private JFrame jframe;
     private ArrayList<PuntoOcupado> puntosOcupados;
     
@@ -1218,7 +1218,7 @@ public class Vehiculo extends SingleAgent{
                     compruebaOcupados();
                     inicializarMapa();
                     jframe = new JFrame();
-                    m = new MyDrawPanel(mapa);
+                    m = new DibujarMapa(mapa);
                     jframe.add(m);
                     jframe.setSize(mapa.length, mapa.length);
                     jframe.setVisible(true);
@@ -1293,7 +1293,7 @@ public class Vehiculo extends SingleAgent{
                                 actualizarDatos();
                         }
                     }
-                    m.Update(mapa);
+                    m.Actualizar(mapa);
                     m.repaint();
                 }
                 

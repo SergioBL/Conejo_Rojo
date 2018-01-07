@@ -44,7 +44,7 @@ public class Pizarra extends SingleAgent{
     private Tipo tipo;
     private int EnergiaTotal;
     private int NvehiculosObjetivo;
-    private MyDrawPanel m;
+    private DibujarMapa m;
     private JFrame jframe;
     private Memoria memoria;
     
@@ -76,7 +76,7 @@ public class Pizarra extends SingleAgent{
         vehiculos = new HashMap<String, DatosVehiculo>();
         EnergiaTotal=0;
         NvehiculosObjetivo=0;
-        mapa_explorar = "map1";
+        mapa_explorar = "map7";
         memoria= new Memoria(mapa_explorar);
     }
     
@@ -332,9 +332,8 @@ public class Pizarra extends SingleAgent{
                         //Enviamos primero al mas cercano
                         rellenarMatrizScanner(recepcion.getInt("o_x"),recepcion.getInt("o_y"));
                         moverAgenteObjetivo(inbox.getSender().toString());
-                        jframe.dispose();
                     }
-                    m.Update(mapa_compartido);
+                    m.Actualizar(mapa_compartido);
                     m.repaint();
                 }else{
                     System.out.println("No se mueve bien el coche");
@@ -362,7 +361,7 @@ public class Pizarra extends SingleAgent{
         try {
             conexion();
             jframe = new JFrame();
-            m = new MyDrawPanel(mapa_compartido);
+            m = new DibujarMapa(mapa_compartido);
             jframe.add(m);
             jframe.setSize(mapa_compartido.length, mapa_compartido.length);
             jframe.setVisible(true);
@@ -385,6 +384,7 @@ public class Pizarra extends SingleAgent{
     public void finalize(){
         try {
             System.out.println("Pizarra muerto");
+            jframe.dispose();
         } finally {
             super.finalize();
         }
@@ -437,22 +437,28 @@ public class Pizarra extends SingleAgent{
                 finalizar=true;
                 envio = new JSONObject();
                 envio.put("","");
-                enviar_mensaje(envio.toString(),"achernar",ACLMessage.CANCEL);
+                enviar_mensaje(envio.toString(),"Achernar",ACLMessage.CANCEL);
+                recibir_mensaje();
                 recibir_mensaje();
                 if(recepcion.has("trace")){
                     JSONArray traza= recepcion.getJSONArray("trace");
-                    try{
-                        byte data[]=new byte[traza.length()];
-                        for(int x=0; x<data.length; x++){
-                            data[x]=(byte) traza.getInt(x);
-                        }
-                        try (FileOutputStream fos = new FileOutputStream(conversacion_id+"_"+mapa+".png")) {
-                            fos.write(data);
-                        }
-                        System.out.println("Traza Guardada");
-                    } 
-                    catch (IOException ex){
-                        System.err.println("Error procesando traza");
+                    byte traza_bytes[]=new byte[traza.length()];
+                    for(int x=0; x<traza_bytes.length; x++){
+                        traza_bytes[x]=(byte) traza.getInt(x);
+                    }
+                    String tipos_vehiculos = "";
+                    boolean primero = true;
+                    for(Map.Entry<String, DatosVehiculo> entry : vehiculos.entrySet()) {
+                        DatosVehiculo v = entry.getValue();
+                        if(!primero)
+                            tipos_vehiculos += ",";
+                        tipos_vehiculos += v.tipoVehiculo.toString();
+                        primero = false;
+                    }
+                    try (FileOutputStream fos = new FileOutputStream(mapa_explorar+"_"+conversacion_id+"_"+tipos_vehiculos+".png")) {
+                        fos.write(traza_bytes);
+                    }catch (IOException e){
+                        System.err.println("Error en traza");
                     }
                 }
             }

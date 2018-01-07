@@ -34,52 +34,47 @@ public class Memoria {
     
         File archivo=new File(mapa+".txt");
 
-    FileWriter escribir=new FileWriter(archivo,true);
+        FileWriter escribir=new FileWriter(archivo,true);
 
-    escribir.write(x);
-    escribir.append("\r\n");
-    escribir.write(y);
+        escribir.write(x);
+        escribir.append("\r\n");
+        escribir.write(y);
 
-    escribir.close();
-  }
+        escribir.close();
+    }
    
    /**
    * @author Joaquin
    */
-  public boolean leer(){
-    boolean existe=true;
-    int a = 0;
-    String texto="";
-    try
-    {
-    FileReader lector=new FileReader(mapa+".txt");
-
-    BufferedReader contenido=new BufferedReader(lector);
- 
-    while((texto=contenido.readLine())!=null)
-    {
-        if(a==0){
-          this.x=Integer.parseInt(texto);
-          a=1;
+    public boolean leer(){
+        boolean existe=true;
+        int a = 0;
+        String texto="";
+        try{
+            FileReader lector=new FileReader(mapa+".txt");
+            BufferedReader contenido=new BufferedReader(lector);
+            while((texto=contenido.readLine())!=null)
+            {
+                if(a==0){
+                  this.x=Integer.parseInt(texto);
+                  a=1;
+                }
+                this.y=Integer.parseInt(texto);
+                System.out.println(texto);
+            }
+        }catch(IOException | NumberFormatException e){
+         existe=false;
         }
-        this.y=Integer.parseInt(texto);
-        System.out.println(texto);
+        return existe;
     }
-    }
-    catch(Exception e)
-    {
-     existe=false;
-    }
-    return existe;
-  }
   
-  public int getX(){
-  return x;
-  }
+    public int getX(){
+        return x;
+    }
   
-  public int getY(){
-  return y;
-  }
+    public int getY(){
+        return y;
+    }
 
 }
 

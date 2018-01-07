@@ -9,21 +9,20 @@ import java.awt.image.BufferedImage;
  * 
  * @author Alex
  */
-public class MyDrawPanel extends javax.swing.JPanel {
+public class DibujarMapa extends javax.swing.JPanel {
     
-    BufferedImage image = new BufferedImage(560, 560, BufferedImage.TYPE_INT_RGB);
-    boolean radar;
+    BufferedImage mapaDibujado = new BufferedImage(560, 560, BufferedImage.TYPE_INT_RGB);
 
     /**
     *
     * @author Alex
     */
-    public MyDrawPanel(int [][] mapWorld) {
+    public DibujarMapa(int [][] mapa) {
         initComponents();
         
-	for(int y = 0; y < mapWorld.length; ++y)
-            for(int x = 0; x < mapWorld.length; ++x){
-                    paintCoord(mapWorld[y][x], x, y);
+	for(int y = 0; y < mapa.length; ++y)
+            for(int x = 0; x < mapa.length; ++x){
+                    DibujarBit(mapa[y][x], x, y);
             }
     }
     
@@ -31,34 +30,30 @@ public class MyDrawPanel extends javax.swing.JPanel {
     *
     * @author Alex
     */
-    public void Update(int [][] mapWorld) {	
+    public void Actualizar(int [][] mapWorld) {	
 	for(int y = 0; y < mapWorld.length; ++y)
             for(int x = 0; x < mapWorld.length; ++x)
-                    paintCoord(mapWorld[y][x], x, y);
+                    DibujarBit(mapWorld[y][x], x, y);
     }
     
     /**
      * 
      * @author Alex
      */
-    private void paintCoord(int mapWorld, int x, int y) {
+    private void DibujarBit(int valor, int x, int y) {
             Color color;
-            switch(mapWorld) {
+            switch(valor) {
                 case 0:
                     color = Color.WHITE;
-                    image.setRGB(x, y, color.getRGB());
-                break;
-                case 50000:
-                    color = Color.BLACK;
-                    image.setRGB(x, y, color.getRGB());
+                    mapaDibujado.setRGB(x, y, color.getRGB());
                 break;
                 case -1:
                     color = Color.RED;
-                    image.setRGB(x, y, color.getRGB());
+                    mapaDibujado.setRGB(x, y, color.getRGB());
                     break;
                 default:
                     color = Color.GRAY;
-                    image.setRGB(x, y, color.getRGB());
+                    mapaDibujado.setRGB(x, y, color.getRGB());
                     break;
             }
     }
@@ -69,7 +64,7 @@ public class MyDrawPanel extends javax.swing.JPanel {
 	 */
 	@Override
         public void paint(Graphics g) {
-            g.drawImage(image, 0, 0,image.getHeight(),image.getWidth(), null);
+            g.drawImage(mapaDibujado, 0, 0,mapaDibujado.getHeight(),mapaDibujado.getWidth(), null);
         }
 
     
