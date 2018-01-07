@@ -55,6 +55,11 @@ public class Vehiculo extends SingleAgent{
     private JFrame jframe;
     private ArrayList<PuntoOcupado> puntosOcupados;
     
+    
+    /**
+    *
+    * @author Alex
+    */
     class PuntoOcupado{
         private int x; 
         private int y;
@@ -75,7 +80,7 @@ public class Vehiculo extends SingleAgent{
     
     /**
     *
-    * @author 
+    * @author Alex Alvaro
     */
     public Vehiculo(AgentID aid) throws Exception {
         super(aid);
@@ -95,7 +100,7 @@ public class Vehiculo extends SingleAgent{
     
     /**
     *
-    * @author Alex  Joaquin
+    * @author Alex Joaquin
     */
     public boolean conexion() throws InterruptedException, JSONException{
         //Recibimos el request de pizarra1
@@ -166,11 +171,6 @@ public class Vehiculo extends SingleAgent{
             for(int j = 0; j < range; j++)
                 radar[i/range][j] = rad.getInt(i+j);
         
-        /*System.out.print("Vehiculo: actualizo radar ");
-        for(int i = 0; i < range; i++)
-            for(int j = 0; j < range; j++)
-                System.out.print(radar[i][j] + ", ");*/
-        
         actualizarMapaComun();
     }
     
@@ -200,10 +200,9 @@ public class Vehiculo extends SingleAgent{
     
     /**
     *
-    * @author Alex
+    * @author Alex Alvaro
     */
     public void actualizarMapaComun(){
-        //System.out.println("Vehiculo " +nombreVehiculo+" : actualizo mapa comun");
         int medio;
         if(range==11)
             medio=5;
@@ -227,7 +226,6 @@ public class Vehiculo extends SingleAgent{
     * @author Alex
     */
     public void obtieneMapaComun() throws JSONException{
-        //System.out.println("Vehiculo " +nombreVehiculo+" : obtengo mapa comun");
         CompresorArray c;
         if(recepcion.has("ID")){
             c = new CompresorArray(recepcion.getString("Mapa"));
@@ -313,7 +311,7 @@ public class Vehiculo extends SingleAgent{
     
     /**
     *
-    * @author 
+    * @author Alex
     */
     @Override
     public void finalize(){
@@ -1166,14 +1164,14 @@ public class Vehiculo extends SingleAgent{
                     enviar_mensaje(envio.toString(),"Achernar",ACLMessage.REQUEST);
                     recibir_mensaje();
                 }
-                //Comrpobamos que no ha habido error al hablar con el servidor
+                //Comrpobamos que no ha habido error al hablar con el servidor (Alex)
                 if(inbox.getPerformativeInt()==ACLMessage.FAILURE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD || inbox.getPerformativeInt()==ACLMessage.REFUSE){
                         finalizar =true;
                         envio = new JSONObject();
                         envio.put("details : "+this.nombre,recepcion.getString("details"));
                         enviar_mensaje(envio.toString(),"pizarra1",ACLMessage.REFUSE);
                 }
-                else{
+                else{//Alex
                     //actualizamos los datos ya que nos hemos movido y se lo enviamos a pizarra1
                     envio = new JSONObject();
 

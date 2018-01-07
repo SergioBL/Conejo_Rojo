@@ -11,41 +11,70 @@ import org.codehaus.jettison.json.JSONException;
 
 /**
  *
- * @author alexr
+ * @author Alex Clase para gestionar el número de veces que aparece de forma consecutiva
  */
 
 class Apariciones{
     private int apariciones;
     private int numero;
     
+    
+    /**
+    *
+    * @author Alex
+    */
     Apariciones(int n, int a){
         apariciones = a;
         numero = n;
     }
     
+    /**
+    *
+    * @author Alex
+    */
     Apariciones(int n){
         apariciones = 1;
         numero = n;
     }
     
+    /**
+    *
+    * @author Alex
+    */
     Apariciones(){
         apariciones = 0;
         numero = 0;
     }
     
+    /**
+    *
+    * @author Alex
+    */
     public void addAparicion(){
         apariciones++;
     }
     
+    /**
+    *
+    * @author Alex
+    */
     public int getApariciones(){
         return apariciones;
     }
     
+    /**
+    *
+    * @author Alex
+    */
     public int getNumero(){
         return numero;
     }
 }
 
+/**
+ *
+ * @author Alex Clase para comprimir un array
+ */
 public class CompresorArray {
     JSONArray array;
     String arrayComprimido;
@@ -65,6 +94,10 @@ public class CompresorArray {
         Descomprimir();
     }
     
+    /**
+    *
+    * @author Alex
+    */
     public void Comprimir() throws JSONException{
         int anterior = 0;
         Apariciones a = new Apariciones();
@@ -94,6 +127,10 @@ public class CompresorArray {
         //System.out.println(arrayComprimido);
     }
     
+    /**
+    *
+    * @author Alex
+    */
     public void Descomprimir(){
         String[] partes = arrayComprimido.split(",");
         for(int i = 0; i < partes.length; i++){
@@ -110,10 +147,18 @@ public class CompresorArray {
         //System.out.println(array.toString());
     }
     
+    /**
+    *
+    * @author Alex
+    */
     public JSONArray getArraySinComprimir(){
         return array;
     }
     
+    /**
+    *
+    * @author Alex
+    */
     public String getStringComprimido(){
         return arrayComprimido;
     }

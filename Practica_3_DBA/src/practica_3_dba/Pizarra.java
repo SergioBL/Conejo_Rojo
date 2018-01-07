@@ -82,7 +82,7 @@ public class Pizarra extends SingleAgent{
     
     /**
     *
-    * @author Joaquin Alex
+    * @author Joaquin Alex Joaquin
     */
     public void conexion() throws JSONException, InterruptedException{
         envio = new JSONObject();
@@ -157,19 +157,6 @@ public class Pizarra extends SingleAgent{
         this.send(outbox);
     }
     
-    /**
-    *
-    * @author Alex Sergio Salomé Joaquín
-    */
-    public void enviar_mensaje(String mensaje, AgentID receptor, int performativa){
-        System.out.println("Pizarra envia: " + " a "+receptor);
-        outbox = new ACLMessage();
-        outbox.setSender(getAid());
-        outbox.setReceiver(receptor);
-        outbox.setContent(mensaje);
-        outbox.setPerformative(performativa);
-        this.send(outbox);
-    }
     
     /**
     *
@@ -240,13 +227,12 @@ public class Pizarra extends SingleAgent{
                     scanner_compartido[i][j] = distancia_y;
                 
             }
-        System.out.println("Terminado sin problemas, cargando ....");
     }
     
     
     /**
     *
-    * @author Joaquin Sergio
+    * @author Joaquin Sergio Alex Alvaro
     */
     public void moverAgenteObjetivo(String nombreAgent) throws JSONException, InterruptedException{
         envio = new JSONObject();
@@ -273,7 +259,7 @@ public class Pizarra extends SingleAgent{
     }
     /**
     *
-    * @author Joaquin
+    * @author Joaquin Alex Alvaro
     */
     public void siguienteVehiculoObjetivo()throws JSONException, InterruptedException{
         int distancia = 9000000;
@@ -299,7 +285,7 @@ public class Pizarra extends SingleAgent{
     
     /**
     *
-    * @author Joaquin Alex
+    * @author Joaquin Alex Alvaro
     */
     public void buscarObjetivo()throws JSONException, InterruptedException, IOException{
         for (Map.Entry<String, DatosVehiculo> entry : vehiculos.entrySet()) {
