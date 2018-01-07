@@ -98,7 +98,7 @@ public class Pizarra extends SingleAgent{
         envio.put("Mapa",c.getStringComprimido());
         envio.put("Pasos", pasosComun);
         for(int i = 1; i <= 4; i++){
-            int aux = i+12;
+            int aux = i;
             enviar_mensaje(envio.toString(), "vehiculo"+aux, ACLMessage.REQUEST);
             recibir_mensaje();
             
