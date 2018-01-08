@@ -26,23 +26,18 @@ import org.codehaus.jettison.json.JSONObject;
  */
 public class Pizarra extends SingleAgent{
     
-    private int bateria;
     private JSONObject envio;
     private JSONObject recepcion;
     private ACLMessage outbox, inbox;
     private int mapa_compartido[][];
     private int scanner_compartido[][];
-    private String mapa_explorar;
-    
+    private String mapa_explorar;    
     private Map<String, DatosVehiculo> vehiculos;
     private boolean finalizar;
     private String conversacion_id;
     private boolean objetivoEncontrado;
-    private boolean EnObjetivo;//asociarlo a vehiculo
     private JSONArray mapa;
     private int pasosComun;
-    private Tipo tipo;
-    private int EnergiaTotal;
     private int NvehiculosObjetivo;
     private DibujarMapa m;
     private JFrame jframe;
@@ -74,9 +69,9 @@ public class Pizarra extends SingleAgent{
         pasosComun = 0;
         objetivoEncontrado=false;
         vehiculos = new HashMap<String, DatosVehiculo>();
-        EnergiaTotal=0;
+        
         NvehiculosObjetivo=0;
-        mapa_explorar = "map7";
+        mapa_explorar = "map1";
         memoria= new Memoria(mapa_explorar);
     }
     
@@ -104,7 +99,7 @@ public class Pizarra extends SingleAgent{
             
             if(recepcion.has("TipoVehiculo")){       
                 String t = recepcion.getString("TipoVehiculo");
-                       
+                Tipo tipo = null;       
                 switch (t) {
                     case "CAMION":
                         tipo = Tipo.CAMION;
@@ -310,7 +305,6 @@ public class Pizarra extends SingleAgent{
                     vActualDatos.y = recepcion.getInt("y");
                     vActualDatos.Bateria = recepcion.getInt("Bateria");
                     vActualDatos.EnObjetivo = false;
-                    EnergiaTotal = recepcion.getInt("energy");
                     vehiculos.put(vActualID, vActualDatos);
                     if(recepcion.getBoolean("visto")){
                         System.out.println("enhorabuena,Objetivo encontrado por = " + inbox.getSender().toString());
@@ -418,7 +412,6 @@ public class Pizarra extends SingleAgent{
                 siguienteVehiculoObjetivo();
                 NvehiculosObjetivo++;
             }else if(NvehiculosObjetivo==4){
-                EnObjetivo=true;
                 System.out.println("Todos en objetivo");
                 finalizar=true;
                 envio = new JSONObject();

@@ -30,10 +30,10 @@ public class DibujarMapa extends javax.swing.JPanel {
     *
     * @author Alex
     */
-    public void Actualizar(int [][] mapWorld) {	
-	for(int y = 0; y < mapWorld.length; ++y)
-            for(int x = 0; x < mapWorld.length; ++x)
-                    DibujarBit(mapWorld[y][x], x, y);
+    public void Actualizar(int [][] mapa) {	
+	for(int y = 0; y < mapa.length; ++y)
+            for(int x = 0; x < mapa.length; ++x)
+                    DibujarBit(mapa[y][x], x, y);
     }
     
     /**

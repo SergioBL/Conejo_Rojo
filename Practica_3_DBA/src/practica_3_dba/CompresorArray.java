@@ -14,62 +14,7 @@ import org.codehaus.jettison.json.JSONException;
  * @author Alex Clase para gestionar el número de veces que aparece de forma consecutiva
  */
 
-class Apariciones{
-    private int apariciones;
-    private int numero;
-    
-    
-    /**
-    *
-    * @author Alex
-    */
-    Apariciones(int n, int a){
-        apariciones = a;
-        numero = n;
-    }
-    
-    /**
-    *
-    * @author Alex
-    */
-    Apariciones(int n){
-        apariciones = 1;
-        numero = n;
-    }
-    
-    /**
-    *
-    * @author Alex
-    */
-    Apariciones(){
-        apariciones = 0;
-        numero = 0;
-    }
-    
-    /**
-    *
-    * @author Alex
-    */
-    public void addAparicion(){
-        apariciones++;
-    }
-    
-    /**
-    *
-    * @author Alex
-    */
-    public int getApariciones(){
-        return apariciones;
-    }
-    
-    /**
-    *
-    * @author Alex
-    */
-    public int getNumero(){
-        return numero;
-    }
-}
+
 
 /**
  *
@@ -79,6 +24,62 @@ public class CompresorArray {
     JSONArray array;
     String arrayComprimido;
     ArrayList<Apariciones> compresion;
+    
+    class Apariciones{
+        private int apariciones;
+        private int numero;
+
+        /**
+        *
+        * @author Alex
+        */
+        Apariciones(int n, int a){
+            apariciones = a;
+            numero = n;
+        }
+
+        /**
+        *
+        * @author Alex
+        */
+        Apariciones(int n){
+            apariciones = 1;
+            numero = n;
+        }
+
+        /**
+        *
+        * @author Alex
+        */
+        Apariciones(){
+            apariciones = 0;
+            numero = 0;
+        }
+
+        /**
+        *
+        * @author Alex
+        */
+        public void addAparicion(){
+            apariciones++;
+        }
+
+        /**
+        *
+        * @author Alex
+        */
+        public int getApariciones(){
+            return apariciones;
+        }
+
+        /**
+        *
+        * @author Alex
+        */
+        public int getNumero(){
+            return numero;
+        }
+    }
     
     CompresorArray (JSONArray a) throws JSONException{
         array = a;
