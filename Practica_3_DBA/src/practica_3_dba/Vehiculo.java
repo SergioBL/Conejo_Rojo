@@ -33,12 +33,7 @@ public class Vehiculo extends SingleAgent{
     private ACLMessage outbox, inbox; 
     private JSONObject envio;
     private JSONObject recepcion;
-    private String key;
-    private Boolean repostaje;
     private Boolean finalizar;
-    private Boolean BUSCANDO;
-    private Boolean LLEGANDO;
-    private Boolean ESPERANDO;
     private Tipo tipo;
     private String conversacion_id;
     private AgentID nombreVehiculo;
@@ -1223,7 +1218,7 @@ public class Vehiculo extends SingleAgent{
                     jframe.setTitle(this.nombre);
                 }
                 
-                while(!goal || finalizar){ 
+                while(!goal && !finalizar){ 
                     if(bateria <= fuelrate){
                         envio = new JSONObject();
                         envio.put("command","refuel");
@@ -1232,10 +1227,9 @@ public class Vehiculo extends SingleAgent{
                         recibir_mensaje();
                         
                         if(inbox.getPerformativeInt()==ACLMessage.REFUSE || inbox.getPerformativeInt()==ACLMessage.NOT_UNDERSTOOD){
-                            if(recepcion.getString("details").equals("BAD ENERGY")){
+                            if(recepcion.getString("details").equals("BAD ENERGY"))
                                 System.out.println("No hay mas recargas disponibles,Energia Agotada");
-                                finalizar = true;
-                            }
+                            
                             finalizar = true;
                             envio = new JSONObject();
                             envio.put("details : "+this.nombre,recepcion.getString("details"));
